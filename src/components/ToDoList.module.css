@@ -1,0 +1,12 @@
+.activeFilter {
+    color: #61dafb;
+}
+
+.inputError input {
+    border: darkred solid 3px;
+}
+
+.inputError .errorMessage {
+    color: darkred;
+    font-weight: bold;
+}
