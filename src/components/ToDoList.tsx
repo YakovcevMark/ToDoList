@@ -1,7 +1,9 @@
-import React, {ChangeEvent, KeyboardEvent, MouseEvent, useState} from "react";
-import {ErrorType, FilterValuesType, TaskType} from "../App";
+import React, {MouseEvent} from "react";
+import {FilterValuesType, TaskType} from "../App";
 import {Task} from "./ Task";
 import s from "./ToDoList.module.css"
+import {AddItemInput} from "./AddItemInput/AddItemInput";
+import EditableSpan from "./EditableSpan";
 
 
 type PropsType = {
@@ -14,6 +16,8 @@ type PropsType = {
     id: string
     filter: FilterValuesType
     changeFilter: (value: FilterValuesType, toDoListId: string) => void
+    changeToDoListName: (title: string, toDoListId: string) => void
+    changeTaskName: (title: string, toDoListId: string, taskId: string) => void
 }
 export const ToDoList: React.FC<PropsType> = ({
                                                   addTask,
@@ -24,10 +28,11 @@ export const ToDoList: React.FC<PropsType> = ({
                                                   toggleComplete,
                                                   filter,
                                                   changeFilter,
+                                                  changeToDoListName,
+                                                  changeTaskName,
                                                   ...props
                                               }) => {
-    const [newTaskTitle, setNewTaskTitle] = useState<string>("");
-    const [error, setError] = useState<ErrorType>(null);
+
 
     const filteredTasks = (tasks: TaskType[]): TaskType[] => {
         if (filter === "Active")
@@ -37,58 +42,35 @@ export const ToDoList: React.FC<PropsType> = ({
         return tasks;
     }
 
-    function onChangeHandler(event: ChangeEvent<HTMLInputElement>) {
-        setNewTaskTitle(event.currentTarget.value);
-        setError(null);
-    }
 
-    function addNewTask() {
-        const title = newTaskTitle.trim()
-        if (title !== "") {
-            addTask(title, props.id)
-            setNewTaskTitle("");
-        } else {
-            setError("Field is required")
-        }
-
-    }
-
-    const onKeyPressHandler = (e: KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "ENTER")
-            addNewTask()
-    }
     const onChangeFilter = (e: MouseEvent<HTMLButtonElement>) => {
         changeFilter(e.currentTarget.value as FilterValuesType, props.id)
     }
-    const removeTaskHandler = (taskId:string) => {
-        removeTask(taskId,props.id)
+    const removeTaskHandler = (taskId: string) => {
+        removeTask(taskId, props.id)
     }
-    const toggleCompleteHandler = (taskId:string) => {
-        toggleComplete(taskId,props.id)
+    const toggleCompleteHandler = (taskId: string) => {
+        toggleComplete(taskId, props.id)
     }
-
-    const inputClassName = error ? s.inputError : "";
+    const addNewTask = (title: string) => {
+        addTask(title, props.id)
+    }
+    const changeToDoListNameHandler = (title: string) => {
+        changeToDoListName(title, props.id)
+    }
+    const changeTaskNameHandler = (title: string, taskId: string) => {
+        changeTaskName(title, taskId, props.id)
+    }
     return <>
-        <h3>{title}
+        <h3><EditableSpan value={title} setValue={changeToDoListNameHandler}></EditableSpan>
             <button onClick={() => removeToDoList(props.id)}>X</button>
         </h3>
-
-
-        <div className={inputClassName}>
-            <input
-                value={newTaskTitle}
-                onChange={onChangeHandler}
-                onKeyPress={onKeyPressHandler}/>
-            <button onClick={addNewTask}>+</button>
-            <div>
-                {error && <span className={s.errorMessage}>{error}</span>}
-            </div>
-
-        </div>
+        <AddItemInput addItem={addNewTask}/>
         <ul>
-            {filteredTasks(tasks).map(t => <Task task={t}
-                                                 removeTask={removeTaskHandler}
-                                                 toggleComplete={toggleCompleteHandler}
+            {tasks && filteredTasks(tasks).map(t => <Task task={t}
+                                                          removeTask={removeTaskHandler}
+                                                          toggleComplete={toggleCompleteHandler}
+                                                          changeTaskName={changeTaskNameHandler}
             />)}
         </ul>
         <div>
@@ -112,4 +94,5 @@ export const ToDoList: React.FC<PropsType> = ({
         </div>
     </>
 }
+
 
