@@ -1,9 +1,10 @@
 import React, {MouseEvent} from "react";
 import {FilterValuesType, TaskType} from "../App";
 import {Task} from "./ Task";
-import s from "./ToDoList.module.css"
-import {AddItemInput} from "./AddItemInput/AddItemInput";
+import {AddItemForm} from "./AddItemInput/AddItemForm";
 import EditableSpan from "./EditableSpan";
+import {Button, IconButton} from "@material-ui/core";
+import {Delete} from "@material-ui/icons";
 
 
 type PropsType = {
@@ -19,21 +20,20 @@ type PropsType = {
     changeToDoListName: (title: string, toDoListId: string) => void
     changeTaskName: (title: string, toDoListId: string, taskId: string) => void
 }
-export const ToDoList: React.FC<PropsType> = ({
-                                                  addTask,
-                                                  removeToDoList,
-                                                  title,
-                                                  tasks,
-                                                  removeTask,
-                                                  toggleComplete,
-                                                  filter,
-                                                  changeFilter,
-                                                  changeToDoListName,
-                                                  changeTaskName,
-                                                  ...props
-                                              }) => {
-
-
+export const ToDoList: React.FC<PropsType> = (
+    {
+        addTask,
+        removeToDoList,
+        title,
+        tasks,
+        removeTask,
+        toggleComplete,
+        filter,
+        changeFilter,
+        changeToDoListName,
+        changeTaskName,
+        ...props
+    }) => {
     const filteredTasks = (tasks: TaskType[]): TaskType[] => {
         if (filter === "Active")
             return tasks.filter(t => !t.isDone)
@@ -41,7 +41,6 @@ export const ToDoList: React.FC<PropsType> = ({
             return tasks.filter(t => t.isDone)
         return tasks;
     }
-
 
     const onChangeFilter = (e: MouseEvent<HTMLButtonElement>) => {
         changeFilter(e.currentTarget.value as FilterValuesType, props.id)
@@ -61,38 +60,49 @@ export const ToDoList: React.FC<PropsType> = ({
     const changeTaskNameHandler = (title: string, taskId: string) => {
         changeTaskName(title, taskId, props.id)
     }
-    return <>
-        <h3><EditableSpan value={title} setValue={changeToDoListNameHandler}></EditableSpan>
-            <button onClick={() => removeToDoList(props.id)}>X</button>
+    return <div>
+
+        <h3><EditableSpan label="List name"
+                          value={title}
+                          setValue={changeToDoListNameHandler}/>
+
+            <IconButton onClick={() => removeToDoList(props.id)}>
+                <Delete/>
+            </IconButton>
         </h3>
-        <AddItemInput addItem={addNewTask}/>
-        <ul>
-            {tasks && filteredTasks(tasks).map(t => <Task task={t}
-                                                          removeTask={removeTaskHandler}
-                                                          toggleComplete={toggleCompleteHandler}
-                                                          changeTaskName={changeTaskNameHandler}
-            />)}
-        </ul>
+        <AddItemForm label="Task name"
+                     addItem={addNewTask}/>
+        {tasks && filteredTasks(tasks).map(t =>
+            <Task task={t}
+                  removeTask={removeTaskHandler}
+                  toggleComplete={toggleCompleteHandler}
+                  changeTaskName={changeTaskNameHandler}
+            />)
+        }
         <div>
-            <button
-                className={filter === "All" ? s.activeFilter : ""}
+            <Button
+                variant={filter === 'All' ? 'outlined' : undefined}
                 onClick={onChangeFilter}
-                value="All">
+                value="All"
+                color={'default'}>
                 All
-            </button>
-            <button
-                className={filter === "Active" ? s.activeFilter : ""}
+            </Button>
+            <Button
+                variant={filter === 'Active' ? 'outlined' : undefined}
                 onClick={onChangeFilter}
-                value="Active">
+                value="Active"
+                color={'primary'}>
                 Active
-            </button>
-            <button className={filter === "Completed" ? s.activeFilter : ""}
-                    onClick={onChangeFilter}
-                    value="Completed">
+            </Button>
+            <Button
+                variant={filter === 'Completed' ? 'outlined' : undefined}
+                onClick={onChangeFilter}
+                value="Completed"
+                color={'secondary'}>
                 Completed
-            </button>
+            </Button>
         </div>
-    </>
+    </div>
 }
 
 

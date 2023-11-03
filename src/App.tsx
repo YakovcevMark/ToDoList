@@ -2,7 +2,9 @@ import React, {useState} from 'react';
 import {v1} from 'uuid';
 import './App.css';
 import {ToDoList} from "./components/ToDoList";
-import {AddItemInput} from "./components/AddItemInput/AddItemInput";
+import {AddItemForm} from "./components/AddItemInput/AddItemForm";
+import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography} from "@material-ui/core";
+import {Menu} from "@material-ui/icons";
 
 export type FilterValuesType = "All" | "Active" | "Completed"
 export type ErrorType = string | null
@@ -95,10 +97,28 @@ function App() {
     }
 
     return <>
-        <AddItemInput addItem={createNewToDoList}/>
-        <div>
-            {
-                toDoLists.map(tl => <ToDoList title={tl.title}
+        <div className="App">
+            <AppBar position="static">
+                <Toolbar>
+                    <IconButton edge="start" color="inherit" arial-label="menu">
+                        <Menu/>
+                    </IconButton>
+                    <Typography variant="h6">
+                        News
+                    </Typography>
+                    <Button color="inherit">Login</Button>
+                </Toolbar>
+            </AppBar>
+            <Container fixed>
+                <Grid container style={{padding:"20px"}}>
+                    <AddItemForm addItem={createNewToDoList}/>
+                </Grid>
+                <Grid container spacing={3}>
+                    {
+                        toDoLists.map(tl =>
+                            <Grid item>
+                                <Paper style={{padding: "10px"}}>
+                                    <ToDoList title={tl.title}
                                               removeToDoList={removeToDoList}
                                               tasks={tasks[tl.id]}
                                               addTask={addTask}
@@ -109,9 +129,14 @@ function App() {
                                               filter={tl.filter}
                                               changeFilter={changeFilter}
                                               changeToDoListName={changeToDoListName}
-                                              changeTaskName={changeTaskName}/>)
-            }
+                                              changeTaskName={changeTaskName}/>
+                                </Paper>
+                            </Grid>)
+                    }
+                </Grid>
+            </Container>
         </div>
+
     </>
 }
 

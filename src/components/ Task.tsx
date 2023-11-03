@@ -2,6 +2,8 @@ import {TaskType} from "../App";
 import React from "react";
 import s from "./Task.module.css"
 import EditableSpan from "./EditableSpan";
+import {Checkbox, IconButton} from "@material-ui/core";
+import {Delete} from "@material-ui/icons";
 
 type TaskPropsType = {
     task: TaskType
@@ -10,12 +12,13 @@ type TaskPropsType = {
     toggleComplete: (id: string) => void
     changeTaskName: (title: string, taskId: string) => void
 }
-export const Task: React.FC<TaskPropsType> = ({
-                                                  task,
-                                                  removeTask,
-                                                  toggleComplete,
-                                                  changeTaskName
-                                              }) => {
+export const Task: React.FC<TaskPropsType> = (
+    {
+        task,
+        removeTask,
+        toggleComplete,
+        changeTaskName
+    }) => {
     const onClickButtonHandler = () => removeTask(task.id);
     const onClickInputHandler = () => toggleComplete(task.id);
     const changeTaskNameHandler = (title: string) => {
@@ -23,14 +26,16 @@ export const Task: React.FC<TaskPropsType> = ({
     }
 
     return <>
-        <li className={task.isDone ? s.done : ""} key={task.id}>
-            <input
-                type="checkbox"
+        <div className={task.isDone ? s.done : ""} key={task.id}>
+            <Checkbox
+                color="primary"
                 checked={task.isDone}
                 onClick={onClickInputHandler}/>
             <EditableSpan value={task.title} setValue={changeTaskNameHandler}/>
-            <button onClick={onClickButtonHandler}>X</button>
-        </li>
+            <IconButton size="small" onClick={onClickButtonHandler}>
+                <Delete fontSize="small"/>
+            </IconButton>
+        </div>
     </>
 
 }
