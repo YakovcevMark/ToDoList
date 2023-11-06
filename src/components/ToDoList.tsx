@@ -1,5 +1,5 @@
-import React, {MouseEvent} from "react";
-import {FilterValuesType, TaskType} from "../App";
+import React, {MouseEvent, useMemo} from "react";
+import {FilterValuesType, TaskType} from "../state/stateTypes";
 import {Task} from "./ Task";
 import {AddItemForm} from "./AddItemInput/AddItemForm";
 import EditableSpan from "./EditableSpan";
@@ -60,6 +60,17 @@ export const ToDoList: React.FC<PropsType> = (
     const changeTaskNameHandler = (title: string, taskId: string) => {
         changeTaskName(title, taskId, props.id)
     }
+    const currentTasks = filteredTasks(tasks);
+
+    const taskRender = useMemo(()=> {
+       return currentTasks.map(t =>
+            <Task task={t}
+                  key={t.id}
+                  removeTask={removeTaskHandler}
+                  toggleComplete={toggleCompleteHandler}
+                  changeTaskName={changeTaskNameHandler}
+            />)
+    },[currentTasks])
     return <div>
 
         <h3><EditableSpan label="List name"
@@ -72,13 +83,7 @@ export const ToDoList: React.FC<PropsType> = (
         </h3>
         <AddItemForm label="Task name"
                      addItem={addNewTask}/>
-        {tasks && filteredTasks(tasks).map(t =>
-            <Task task={t}
-                  removeTask={removeTaskHandler}
-                  toggleComplete={toggleCompleteHandler}
-                  changeTaskName={changeTaskNameHandler}
-            />)
-        }
+        {tasks && taskRender}
         <div>
             <Button
                 variant={filter === 'All' ? 'outlined' : undefined}

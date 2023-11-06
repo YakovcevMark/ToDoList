@@ -1,4 +1,4 @@
-import {TaskType} from "../App";
+import {TaskType} from "../state/stateTypes";
 import React from "react";
 import s from "./Task.module.css"
 import EditableSpan from "./EditableSpan";
