@@ -1,9 +1,9 @@
-import {TaskType} from "../state/stateTypes";
 import React from "react";
 import s from "./Task.module.css"
 import EditableSpan from "./EditableSpan";
 import {Checkbox, IconButton} from "@material-ui/core";
 import {Delete} from "@material-ui/icons";
+import {TaskType} from "../state/tasksReducer";
 
 type TaskPropsType = {
     task: TaskType

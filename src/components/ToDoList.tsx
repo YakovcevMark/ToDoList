@@ -1,10 +1,11 @@
-import React, {MouseEvent, useMemo} from "react";
-import {FilterValuesType, TaskType} from "../state/stateTypes";
+import React, {MouseEvent, useCallback, useMemo} from "react";
 import {Task} from "./ Task";
 import {AddItemForm} from "./AddItemInput/AddItemForm";
 import EditableSpan from "./EditableSpan";
 import {Button, IconButton} from "@material-ui/core";
 import {Delete} from "@material-ui/icons";
+import {FilterValuesType} from "../state/todoListsReducer";
+import {TaskType} from "../state/tasksReducer";
 
 
 type PropsType = {
@@ -42,24 +43,24 @@ export const ToDoList: React.FC<PropsType> = (
         return tasks;
     }
 
-    const onChangeFilter = (e: MouseEvent<HTMLButtonElement>) => {
+    const onChangeFilter = useCallback((e: MouseEvent<HTMLButtonElement>) => {
         changeFilter(e.currentTarget.value as FilterValuesType, props.id)
-    }
-    const removeTaskHandler = (taskId: string) => {
+    },[changeFilter,props])
+    const removeTaskHandler = useCallback((taskId: string) => {
         removeTask(taskId, props.id)
-    }
-    const toggleCompleteHandler = (taskId: string) => {
+    },[removeTask,props])
+    const toggleCompleteHandler = useCallback((taskId: string) => {
         toggleComplete(taskId, props.id)
-    }
-    const addNewTask = (title: string) => {
+    },[toggleComplete,props])
+    const addNewTask = useCallback((title: string) => {
         addTask(title, props.id)
-    }
-    const changeToDoListNameHandler = (title: string) => {
+    },[addTask,props])
+    const changeToDoListNameHandler = useCallback((title: string) => {
         changeToDoListName(title, props.id)
-    }
-    const changeTaskNameHandler = (title: string, taskId: string) => {
+    },[changeToDoListName,props])
+    const changeTaskNameHandler = useCallback((title: string, taskId: string) => {
         changeTaskName(title, taskId, props.id)
-    }
+    },[changeTaskName,props])
     const currentTasks = filteredTasks(tasks);
 
     const taskRender = useMemo(()=> {
