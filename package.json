@@ -2,7 +2,7 @@
   "name": "to-do-list",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://YakovcevMark.github.io/LearnReact",
+  "homepage": "https://YakovcevMark.github.io/ToDoList",
   "dependencies": {
     "@material-ui/core": "^4.12.4",
     "@material-ui/icons": "^4.11.3",
@@ -13,10 +13,13 @@
     "@types/node": "^16.7.13",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
+    "@types/react-redux": "^7.1.30",
     "@types/uuid": "^9.0.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-redux": "^8.1.3",
     "react-scripts": "5.0.1",
+    "redux": "^4.2.1",
     "typescript": "^4.4.2",
     "uuid": "^9.0.1",
     "web-vitals": "^2.1.0"

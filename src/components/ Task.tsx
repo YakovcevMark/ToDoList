@@ -1,4 +1,4 @@
-import React from "react";
+import React, {memo} from "react";
 import s from "./Task.module.css"
 import EditableSpan from "./EditableSpan";
 import {Checkbox, IconButton} from "@material-ui/core";
@@ -12,7 +12,7 @@ type TaskPropsType = {
     toggleComplete: (id: string) => void
     changeTaskName: (title: string, taskId: string) => void
 }
-export const Task: React.FC<TaskPropsType> = (
+const Task: React.FC<TaskPropsType> = (
     {
         task,
         removeTask,
@@ -39,3 +39,4 @@ export const Task: React.FC<TaskPropsType> = (
     </>
 
 }
+export default memo(Task)

@@ -1,4 +1,4 @@
-import React, {MouseEvent, useCallback, useMemo} from "react";
+import React, {memo, MouseEvent, useCallback, useMemo} from "react";
 import {Task} from "./ Task";
 import {AddItemForm} from "./AddItemInput/AddItemForm";
 import EditableSpan from "./EditableSpan";
@@ -12,33 +12,33 @@ type PropsType = {
     title: string
     removeToDoList: (id: string) => void
     tasks: Array<TaskType>
-    addTask: (newTaskTitle: string, toDoListId: string) => void
-    removeTask: (id: string, toDoListId: string) => void
-    toggleComplete: (id: string, toDoListId: string) => void
     id: string
     filter: FilterValuesType
     changeFilter: (value: FilterValuesType, toDoListId: string) => void
     changeToDoListName: (title: string, toDoListId: string) => void
+    addTask: (newTaskTitle: string, toDoListId: string) => void
+    removeTask: (id: string, toDoListId: string) => void
+    toggleComplete: (id: string, toDoListId: string) => void
     changeTaskName: (title: string, toDoListId: string, taskId: string) => void
 }
-export const ToDoList: React.FC<PropsType> = (
+const ToDoList: React.FC<PropsType> = (
     {
-        addTask,
         removeToDoList,
         title,
         tasks,
-        removeTask,
-        toggleComplete,
         filter,
         changeFilter,
         changeToDoListName,
+        removeTask,
+        toggleComplete,
+        addTask,
         changeTaskName,
         ...props
     }) => {
     const filteredTasks = (tasks: TaskType[]): TaskType[] => {
-        if (filter === "Active")
+        if (filter === "active")
             return tasks.filter(t => !t.isDone)
-        if (filter === "Completed")
+        if (filter === "completed")
             return tasks.filter(t => t.isDone)
         return tasks;
     }
@@ -46,21 +46,27 @@ export const ToDoList: React.FC<PropsType> = (
     const onChangeFilter = useCallback((e: MouseEvent<HTMLButtonElement>) => {
         changeFilter(e.currentTarget.value as FilterValuesType, props.id)
     },[changeFilter,props])
+
     const removeTaskHandler = useCallback((taskId: string) => {
         removeTask(taskId, props.id)
     },[removeTask,props])
+
     const toggleCompleteHandler = useCallback((taskId: string) => {
         toggleComplete(taskId, props.id)
     },[toggleComplete,props])
+
     const addNewTask = useCallback((title: string) => {
         addTask(title, props.id)
     },[addTask,props])
+
     const changeToDoListNameHandler = useCallback((title: string) => {
         changeToDoListName(title, props.id)
     },[changeToDoListName,props])
+
     const changeTaskNameHandler = useCallback((title: string, taskId: string) => {
         changeTaskName(title, taskId, props.id)
     },[changeTaskName,props])
+
     const currentTasks = filteredTasks(tasks);
 
     const taskRender = useMemo(()=> {
@@ -71,9 +77,13 @@ export const ToDoList: React.FC<PropsType> = (
                   toggleComplete={toggleCompleteHandler}
                   changeTaskName={changeTaskNameHandler}
             />)
-    },[currentTasks])
+    },[
+        currentTasks,
+        removeTaskHandler,
+        toggleCompleteHandler,
+        changeTaskNameHandler
+    ])
     return <div>
-
         <h3><EditableSpan label="List name"
                           value={title}
                           setValue={changeToDoListNameHandler}/>
@@ -87,28 +97,28 @@ export const ToDoList: React.FC<PropsType> = (
         {tasks && taskRender}
         <div>
             <Button
-                variant={filter === 'All' ? 'outlined' : undefined}
+                variant={filter === 'all' ? 'outlined' : undefined}
                 onClick={onChangeFilter}
-                value="All"
+                value="all"
                 color={'default'}>
                 All
             </Button>
             <Button
-                variant={filter === 'Active' ? 'outlined' : undefined}
+                variant={filter === 'active' ? 'outlined' : undefined}
                 onClick={onChangeFilter}
-                value="Active"
+                value="active"
                 color={'primary'}>
                 Active
             </Button>
             <Button
-                variant={filter === 'Completed' ? 'outlined' : undefined}
+                variant={filter === 'completed' ? 'outlined' : undefined}
                 onClick={onChangeFilter}
-                value="Completed"
+                value="completed"
                 color={'secondary'}>
                 Completed
             </Button>
         </div>
     </div>
 }
-
+export default memo(ToDoList)
 

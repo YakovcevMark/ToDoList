@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useState} from 'react';
+import React, {ChangeEvent, memo, useState} from 'react';
 import {TextField} from "@material-ui/core";
 
 type EditableSpanPropsType = {
@@ -35,4 +35,4 @@ const EditableSpan: React.FC<EditableSpanPropsType> = (
         : <span onDoubleClick={onEditMode}>{value}</span>
 }
 
-export default EditableSpan;
+export default memo(EditableSpan);

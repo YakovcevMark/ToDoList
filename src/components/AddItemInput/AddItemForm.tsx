@@ -1,13 +1,12 @@
-import React, {ChangeEvent, KeyboardEvent, useState} from "react";
-import {ErrorType} from "../../state/stateTypes";
+import React, {ChangeEvent, KeyboardEvent, memo, useState} from "react";
 import {IconButton, TextField} from "@material-ui/core";
 import {AddBox} from "@material-ui/icons";
-
+export type ErrorType = null|string
 type AddItemInputPropsType = {
     addItem: (title: string) => void
     label?: string
 }
-export const AddItemForm: React.FC<AddItemInputPropsType> = (
+const AddItemForm: React.FC<AddItemInputPropsType> = (
     {
         addItem,
         label
@@ -56,3 +55,4 @@ export const AddItemForm: React.FC<AddItemInputPropsType> = (
         </div>
     </>
 }
+export default memo(AddItemForm)
