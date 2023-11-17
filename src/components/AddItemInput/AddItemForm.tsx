@@ -13,7 +13,6 @@ const AddItemForm: React.FC<AddItemInputPropsType> = (
     }) => {
     const [title, setTitle] = useState<string>("");
     const [error, setError] = useState<ErrorType>(null);
-
     function onChangeHandler(e: ChangeEvent<HTMLInputElement>) {
         setTitle(e.currentTarget.value);
         setError(null);

@@ -7,7 +7,6 @@ import {TaskType} from "../state/tasksReducer";
 
 type TaskPropsType = {
     task: TaskType
-
     removeTask: (id: string) => void
     toggleComplete: (id: string) => void
     changeTaskName: (title: string, taskId: string) => void
