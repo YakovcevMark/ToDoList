@@ -25,10 +25,10 @@ const Task: React.FC<TaskPropsType> = (
     }
 
     return <>
-        <div className={task.isDone ? s.done : ""} key={task.id}>
+        <div className={task.status ? s.done : ""} key={task.id}>
             <Checkbox
                 color="primary"
-                checked={task.isDone}
+                checked={task.status}
                 onClick={onClickInputHandler}/>
             <EditableSpan value={task.title} setValue={changeTaskNameHandler}/>
             <IconButton size="small" onClick={onClickButtonHandler}>

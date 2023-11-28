@@ -2,12 +2,16 @@ import React, {memo, MouseEvent, useCallback, useMemo} from "react";
 import EditableSpan from "./EditableSpan";
 import {Button, IconButton} from "@material-ui/core";
 import {Delete} from "@material-ui/icons";
-import {changeTodoListFilter, changeTodoListTitle, FilterValuesType, removeTodoList} from "../state/todoListsReducer";
-import {addTask, changeTaskStatus, changeTaskTitle, removeTask, TasksStateT, TaskType} from "../state/tasksReducer";
-import {useDispatch, useSelector} from "react-redux";
-import {AppStateT} from "../state/store";
+import {
+    changeTodoListFilterAC,
+    changeTodoListTitleAC,
+    FilterValuesType,
+    removeTodoListAC
+} from "../state/todoListsReducer";
+import {addTaskAC, changeTaskStatusAC, changeTaskTitleAC, removeTaskAC, TaskType} from "../state/tasksReducer";
 import Task from "./ Task";
 import AddItemForm from "./AddItemInput/AddItemForm";
+import {useAppDispatch, useAppSelector} from "../state/hooks";
 
 
 type PropsType = {
@@ -22,46 +26,46 @@ const ToDoList: React.FC<PropsType> = (
         filter,
         ...props
     }) => {
-    const tasks = useSelector<AppStateT, TasksStateT>(state => state.tasks)
-    const dispatch = useDispatch()
+    const tasks = useAppSelector(state => state.tasks)
+    const dispatch = useAppDispatch()
     const filteredTasks = (tasks: TaskType[]): TaskType[] => {
         if (filter === "active")
-            return tasks.filter(t => !t.isDone)
+            return tasks.filter(t => !t.status)
         if (filter === "completed")
-            return tasks.filter(t => t.isDone)
+            return tasks.filter(t => t.status)
         return tasks;
     }
 
     const changeFilterHandler = useCallback((e: MouseEvent<HTMLButtonElement>) => {
-        dispatch(changeTodoListFilter(todolistId, e.currentTarget.value as FilterValuesType))
+        dispatch(changeTodoListFilterAC(todolistId, e.currentTarget.value as FilterValuesType))
     },[dispatch, todolistId])
 
     const changeToDoListNameHandler = useCallback((title: string) => {
-        dispatch(changeTodoListTitle(todolistId, title))
+        dispatch(changeTodoListTitleAC(todolistId, title))
     },[dispatch,todolistId])
 
     const onRemoveTodolist = useCallback(() => {
-       dispatch(removeTodoList(todolistId))
+       dispatch(removeTodoListAC(todolistId))
     },[dispatch, todolistId])
 
 
 
     const changeTaskNameHandler = useCallback((title: string, taskId: string) => {
-        dispatch(changeTaskTitle(todolistId, taskId, title))
+        dispatch(changeTaskTitleAC(todolistId, taskId, title))
     },[dispatch,todolistId])
 
     const addNewTask = useCallback((title: string) => {
-        dispatch(addTask(todolistId, title))
+        dispatch(addTaskAC(todolistId, title))
     },[dispatch,todolistId])
 
     const removeTaskHandler = useCallback((taskId: string) => {
-        dispatch(removeTask(todolistId, taskId))
+        dispatch(removeTaskAC(todolistId, taskId))
     },[dispatch,todolistId])
 
     const toggleCompleteHandler = useCallback((taskId: string) => {
         const task = tasks[todolistId].find(t => t.id === taskId)
         if (task) {
-            dispatch(changeTaskStatus(todolistId, taskId, !tasks.isDone))
+            dispatch(changeTaskStatusAC(todolistId, taskId, !tasks.status))
         }
     },[dispatch,todolistId,tasks])
 
