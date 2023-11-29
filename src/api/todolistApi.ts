@@ -1,28 +1,40 @@
 import axios from "axios";
+export enum TaskStatuses {
+    New = 0,
+    InProgress = 1,
+    Completed = 2,
+    Draft = 3
+}
 
+export enum TaskPriorities {
+    Low = 0,
+    Middle = 1,
+    Hi = 2,
+    Urgently = 3,
+    Later = 4
+}
 export type ResponseTodoListType = {
     id: string
     title: string
     addedDate: string
     order: number
 }
-type UpdateTaskModelType = {
-    title?: string
+export type UpdateTaskModelType = {
     description?: string
-    completed?: boolean
-    status?: number
-    priority?: number
+    title?: string
+    status?: TaskStatuses
+    priority?: TaskPriorities
     startDate?: string
     deadline?: string
 }
-export type ResponseTaskType = UpdateTaskModelType & {
+export type TaskType = UpdateTaskModelType & {
     id: string
     todoListId: string
-    order: number
-    addedDate: string
+    order?: number
+    addedDate?: string
 }
 type GetTasksResponseType = {
-    items: ResponseTaskType[]
+    items: TaskType[]
     totalCount: number
     error: string
 }
@@ -57,16 +69,16 @@ export const todoListsApi = {
     }
 }
 export const tasksApi = {
-    getTasks(todolistId: string, count: number, page: number) {
+    getTasks(todolistId: string, count: number = 100, page: number = 1) {
         return instance.get<GetTasksResponseType>(`${todolistId}/tasks?count=${count}&page=${page}`)
     },
     createTask(todolistId: string, title: string) {
-        return instance.post<ResponseType<{ item: ResponseTaskType }>>(`${todolistId}/tasks`, {title})
+        return instance.post<ResponseType<{ item: TaskType }>>(`${todolistId}/tasks`, {title})
     },
     deleteTask(todolistId: string, taskId: string) {
         return instance.delete<ResponseType>(`${todolistId}/tasks/${taskId}`)
     },
     updateTask(todolistId: string, taskId: string, task: UpdateTaskModelType) {
-        return instance.put<ResponseType>(`${todolistId}/tasks/${taskId}`, {...task})
+        return instance.put<ResponseType<{ item: TaskType }>>(`${todolistId}/tasks/${taskId}`, {...task})
     }
 }

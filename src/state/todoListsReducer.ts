@@ -10,8 +10,8 @@ export type TodoListType = ResponseTodoListType & {
 
 
 export type TodoListsActionsType =
-    ReturnType<typeof removeTodoListAC> |
-    ReturnType<typeof addTodoListAC> |
+    ReturnType<typeof deleteTodoListAC> |
+    ReturnType<typeof createTodoListAC> |
     ReturnType<typeof changeTodoListFilterAC> |
     ReturnType<typeof changeTodoListTitleAC> |
     ReturnType<typeof setTodoListsAC>
@@ -58,11 +58,11 @@ export const todoListsReducer = (state: TodoListsStateT = initialState, action: 
             return state
     }
 }
-export const removeTodoListAC = (todoListId: string) =>
+export const deleteTodoListAC = (todoListId: string) =>
     ({type: "REMOVE_TODOLIST", todoListId} as const)
 export const changeTodoListFilterAC = (todoListId: string, filterValue: FilterValuesType) =>
     ({type: "CHANGE_TODOLIST_FILTER", todoListId, filterValue} as const)
-export const addTodoListAC = (newTodoListTitle: string, newTodoListId: string, addedDate: string, order: number) =>
+export const createTodoListAC = (newTodoListTitle: string, newTodoListId: string, addedDate: string, order: number) =>
     ({type: "ADD_TODOLIST", newTodoListTitle, newTodoListId, addedDate, order} as const)
 export const changeTodoListTitleAC = (todoListId: string, newTodoListTitle: string) =>
     ({type: "CHANGE_TODOLIST_TITLE", todoListId, newTodoListTitle} as const)
@@ -78,11 +78,11 @@ export const fetchTodoLists = (): AppThunk =>
         //     throw new Error(e)
         // }
     }
-export const removeTodoLists = (todoListId: string): AppThunk =>
+export const deleteTodoList = (todoListId: string): AppThunk =>
     async (dispatch) => {
         // try {
         await todoListsApi.deleteList(todoListId)
-        dispatch(removeTodoListAC(todoListId))
+        dispatch(deleteTodoListAC(todoListId))
         // } catch (e) {
         //     throw new Error(e)
         // }
@@ -96,12 +96,12 @@ export const updateTodoListTitle = (todoListId: string, newTitle: string): AppTh
         //     throw new Error(e)
         // }
     }
-export const addTodoList = (title: string): AppThunk =>
+export const createTodoList = (title: string): AppThunk =>
     async (dispatch) => {
         // try {
         const res = await todoListsApi.createList(title)
         const neededDate = res.data.data.item
-        dispatch(addTodoListAC(
+        dispatch(createTodoListAC(
             neededDate.title,
             neededDate.id,
             neededDate.addedDate,

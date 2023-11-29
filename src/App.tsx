@@ -4,7 +4,7 @@ import ToDoList from "./components/ToDoList";
 import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography} from "@material-ui/core";
 import {Menu} from "@material-ui/icons";
 import {
-    addTodoList,
+    createTodoList,
     fetchTodoLists
 } from "./state/todoListsReducer";
 import AddItemForm from "./components/AddItemInput/AddItemForm";
@@ -19,7 +19,7 @@ function App() {
     },[dispatch])
 
     const onCreateNewToDoList = useCallback((title:string) => {
-        dispatch(addTodoList(title))
+        dispatch(createTodoList(title))
     },[dispatch])
 
     const todoListsRender = useMemo(() => {

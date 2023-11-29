@@ -1,17 +1,13 @@
-import React, {memo, MouseEvent, useCallback, useMemo} from "react";
+import React, {memo, MouseEvent, useCallback, useEffect, useMemo} from "react";
 import EditableSpan from "./EditableSpan";
 import {Button, IconButton} from "@material-ui/core";
 import {Delete} from "@material-ui/icons";
-import {
-    changeTodoListFilterAC,
-    changeTodoListTitleAC,
-    FilterValuesType,
-    removeTodoListAC
-} from "../state/todoListsReducer";
-import {addTaskAC, changeTaskStatusAC, changeTaskTitleAC, removeTaskAC, TaskType} from "../state/tasksReducer";
+import {changeTodoListFilterAC, deleteTodoList, FilterValuesType, updateTodoListTitle} from "../state/todoListsReducer";
+import {createTask, deleteTask, fetchTasks, updateTask} from "../state/tasksReducer";
 import Task from "./ Task";
 import AddItemForm from "./AddItemInput/AddItemForm";
 import {useAppDispatch, useAppSelector} from "../state/hooks";
+import {TaskType, UpdateTaskModelType} from "../api/todolistApi";
 
 
 type PropsType = {
@@ -23,11 +19,16 @@ const ToDoList: React.FC<PropsType> = (
     {
         todolistId,
         title,
-        filter,
-        ...props
+        filter
     }) => {
     const tasks = useAppSelector(state => state.tasks)
     const dispatch = useAppDispatch()
+
+    useEffect(() => {
+        dispatch(fetchTasks(todolistId))
+    }, [dispatch, todolistId])
+
+
     const filteredTasks = (tasks: TaskType[]): TaskType[] => {
         if (filter === "active")
             return tasks.filter(t => !t.status)
@@ -38,52 +39,43 @@ const ToDoList: React.FC<PropsType> = (
 
     const changeFilterHandler = useCallback((e: MouseEvent<HTMLButtonElement>) => {
         dispatch(changeTodoListFilterAC(todolistId, e.currentTarget.value as FilterValuesType))
-    },[dispatch, todolistId])
+    }, [dispatch, todolistId])
 
     const changeToDoListNameHandler = useCallback((title: string) => {
-        dispatch(changeTodoListTitleAC(todolistId, title))
-    },[dispatch,todolistId])
+        dispatch(updateTodoListTitle(todolistId, title))
+    }, [dispatch, todolistId])
 
     const onRemoveTodolist = useCallback(() => {
-       dispatch(removeTodoListAC(todolistId))
-    },[dispatch, todolistId])
+        dispatch(deleteTodoList(todolistId))
+    }, [dispatch, todolistId])
 
 
+    const updateTaskHandler = useCallback((taskId: string, updateTaskModel: UpdateTaskModelType) => {
+        dispatch(updateTask(todolistId, taskId, updateTaskModel))
+    }, [dispatch, todolistId])
 
-    const changeTaskNameHandler = useCallback((title: string, taskId: string) => {
-        dispatch(changeTaskTitleAC(todolistId, taskId, title))
-    },[dispatch,todolistId])
+    const createTaskHandler = useCallback((title: string) => {
+        dispatch(createTask(todolistId, title))
+    }, [dispatch, todolistId])
 
-    const addNewTask = useCallback((title: string) => {
-        dispatch(addTaskAC(todolistId, title))
-    },[dispatch,todolistId])
+    const deleteTaskHandler = useCallback((taskId: string) => {
+        dispatch(deleteTask(todolistId, taskId))
+    }, [dispatch, todolistId])
 
-    const removeTaskHandler = useCallback((taskId: string) => {
-        dispatch(removeTaskAC(todolistId, taskId))
-    },[dispatch,todolistId])
-
-    const toggleCompleteHandler = useCallback((taskId: string) => {
-        const task = tasks[todolistId].find(t => t.id === taskId)
-        if (task) {
-            dispatch(changeTaskStatusAC(todolistId, taskId, !tasks.status))
-        }
-    },[dispatch,todolistId,tasks])
 
     const currentTasks = filteredTasks(tasks[todolistId]);
 
-    const taskRender = useMemo(()=> {
-       return currentTasks.map(t =>
+    const taskRender = useMemo(() => {
+        return currentTasks.map(t =>
             <Task task={t}
                   key={t.id}
-                  removeTask={removeTaskHandler}
-                  toggleComplete={toggleCompleteHandler}
-                  changeTaskName={changeTaskNameHandler}
+                  deleteTask={deleteTaskHandler}
+                  updateTask={updateTaskHandler}
             />)
-    },[
+    }, [
         currentTasks,
-        removeTaskHandler,
-        toggleCompleteHandler,
-        changeTaskNameHandler
+        deleteTaskHandler,
+        updateTaskHandler
     ])
     return <div>
         <h3><EditableSpan label="List name"
@@ -95,7 +87,7 @@ const ToDoList: React.FC<PropsType> = (
             </IconButton>
         </h3>
         <AddItemForm label="Task name"
-                     addItem={addNewTask}/>
+                     addItem={createTaskHandler}/>
         {tasks && taskRender}
         <div>
             <Button
