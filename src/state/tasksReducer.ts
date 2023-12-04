@@ -1,6 +1,7 @@
 import {createTodoListAC, deleteTodoListAC, setTodoListsAC} from "./todoListsReducer";
-import {TaskType, ResponseTodoListType, tasksApi, UpdateTaskModelType} from "../api/todolistApi";
+import {ResponseTodoListType, tasksApi, TaskType, UpdateTaskModelType} from "../api/todolistApi";
 import {AppThunk} from "./store";
+import {setAppErrorAC, setAppStatusAC} from "./appReducer";
 
 
 export type TasksActionsType =
@@ -81,34 +82,50 @@ export const setTasksAC = (todoListId: string, tasks: TaskType[]) =>
     ({type: "SET_TASKS", todoListId, tasks} as const)
 export const fetchTasks = (todoListId: string): AppThunk =>
     async (dispatch) => {
+        dispatch(setAppStatusAC("loading"))
         const res = await tasksApi.getTasks(todoListId)
         dispatch(setTasksAC(todoListId, res.data.items))
+        dispatch(setAppStatusAC("succeeded"))
     }
 export const createTask = (todoListId: string, title: string): AppThunk =>
     async (dispatch) => {
+        dispatch(setAppStatusAC("loading"))
+
         const res = await tasksApi.createTask(todoListId, title)
         if (res.data.resultCode === 0) {
             dispatch(createTaskAC(todoListId, res.data.data.item))
+            dispatch(setAppStatusAC("succeeded"))
+        } else {
+            if (res.data.messages.length) {
+                dispatch(setAppErrorAC(res.data.messages[0]))
+            } else {
+                dispatch(setAppErrorAC("Some error occurred"))
+            }
+            dispatch(setAppStatusAC("failed"))
         }
     }
 export const deleteTask = (todoListId: string, taskId: string): AppThunk =>
     async (dispatch) => {
+        dispatch(setAppStatusAC("loading"))
         const res = await tasksApi.deleteTask(todoListId, taskId)
         if (res.data.resultCode === 0) {
             dispatch(deleteTaskAC(todoListId, taskId))
+            dispatch(setAppStatusAC("succeeded"))
         }
     }
 export const updateTask = (todoListId: string, taskId: string, updateTaskModel: UpdateTaskModelType): AppThunk =>
-    async (dispatch,getState) => {
-
+    async (dispatch, getState) => {
+        dispatch(setAppStatusAC("loading"))
         const tasks = getState().tasks
         const currentTask = tasks[todoListId].find(t => t.id === taskId)
 
         const res = await tasksApi.updateTask(todoListId, taskId, {
             ...currentTask,
-            ...updateTaskModel})
+            ...updateTaskModel
+        })
         if (res.data.resultCode === 0) {
             dispatch(updateTaskAC(todoListId, taskId, res.data.data.item))
+            dispatch(setAppStatusAC("succeeded"))
         }
     }
 

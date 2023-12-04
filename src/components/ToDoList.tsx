@@ -1,25 +1,33 @@
 import React, {memo, MouseEvent, useCallback, useEffect, useMemo} from "react";
-import EditableSpan from "./EditableSpan";
+import EditableSpan from "./EditableSpan/EditableSpan";
 import {Button, IconButton} from "@material-ui/core";
 import {Delete} from "@material-ui/icons";
-import {changeTodoListFilterAC, deleteTodoList, FilterValuesType, updateTodoListTitle} from "../state/todoListsReducer";
+import {
+    changeTodoListFilterAC,
+    deleteTodoList,
+    FilterValuesType,
+    updateTodoListTitle
+} from "../state/todoListsReducer";
 import {createTask, deleteTask, fetchTasks, updateTask} from "../state/tasksReducer";
 import Task from "./ Task";
 import AddItemForm from "./AddItemInput/AddItemForm";
 import {useAppDispatch, useAppSelector} from "../state/hooks";
 import {TaskType, UpdateTaskModelType} from "../api/todolistApi";
+import {RequestStatusType} from "../state/appReducer";
 
 
 type PropsType = {
     title: string
     todolistId: string
     filter: FilterValuesType
+    entityStatus?: RequestStatusType
 }
 const ToDoList: React.FC<PropsType> = (
     {
         todolistId,
         title,
-        filter
+        filter,
+        entityStatus
     }) => {
     const tasks = useAppSelector(state => state.tasks)
     const dispatch = useAppDispatch()
@@ -82,12 +90,13 @@ const ToDoList: React.FC<PropsType> = (
                           value={title}
                           setValue={changeToDoListNameHandler}/>
 
-            <IconButton onClick={onRemoveTodolist}>
+            <IconButton onClick={onRemoveTodolist} disabled={entityStatus === 'loading'}>
                 <Delete/>
             </IconButton>
         </h3>
         <AddItemForm label="Task name"
-                     addItem={createTaskHandler}/>
+                     addItem={createTaskHandler}
+                     isDisabled={entityStatus === 'loading'}/>
         {tasks && taskRender}
         <div>
             <Button

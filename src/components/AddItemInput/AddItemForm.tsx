@@ -5,11 +5,13 @@ export type ErrorType = null|string
 type AddItemInputPropsType = {
     addItem: (title: string) => void
     label?: string
+    isDisabled?:boolean
 }
 const AddItemForm: React.FC<AddItemInputPropsType> = (
     {
         addItem,
-        label
+        label,
+        isDisabled
     }) => {
     const [title, setTitle] = useState<string>("");
     const [error, setError] = useState<ErrorType>(null);
@@ -45,10 +47,12 @@ const AddItemForm: React.FC<AddItemInputPropsType> = (
                 label={label}
                 variant="outlined"
                 helperText={error}
+                disabled={isDisabled}
             />
             <IconButton
                 color="primary"
-                onClick={addNewTask}>
+                onClick={addNewTask}
+                disabled={isDisabled}>
                 <AddBox/>
             </IconButton>
         </div>

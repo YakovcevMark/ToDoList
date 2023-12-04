@@ -1,6 +1,6 @@
 import React, {memo} from "react";
 import s from "./Task.module.css"
-import EditableSpan from "./EditableSpan";
+import EditableSpan from "./EditableSpan/EditableSpan";
 import {Checkbox, IconButton} from "@material-ui/core";
 import {Delete} from "@material-ui/icons";
 import {TaskStatuses, TaskType, UpdateTaskModelType} from "../api/todolistApi";
