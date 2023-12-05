@@ -2,17 +2,12 @@ import React, {memo, MouseEvent, useCallback, useEffect, useMemo} from "react";
 import EditableSpan from "./EditableSpan/EditableSpan";
 import {Button, IconButton} from "@material-ui/core";
 import {Delete} from "@material-ui/icons";
-import {
-    changeTodoListFilterAC,
-    deleteTodoList,
-    FilterValuesType,
-    updateTodoListTitle
-} from "../state/todoListsReducer";
-import {createTask, deleteTask, fetchTasks, updateTask} from "../state/tasksReducer";
+import {changeTodoListFilterAC, deleteTodoList, FilterValuesType, updateTodoListTitle} from "../state/todoListsReducer";
+import {createTask, deleteTask, fetchTasks, TaskType, updateTask} from "../state/tasksReducer";
 import Task from "./ Task";
 import AddItemForm from "./AddItemInput/AddItemForm";
 import {useAppDispatch, useAppSelector} from "../state/hooks";
-import {TaskType, UpdateTaskModelType} from "../api/todolistApi";
+import {UpdateTaskModelType} from "../api/todolistApi";
 import {RequestStatusType} from "../state/appReducer";
 
 
@@ -70,6 +65,7 @@ const ToDoList: React.FC<PropsType> = (
         dispatch(deleteTask(todolistId, taskId))
     }, [dispatch, todolistId])
 
+    const isDisabled = entityStatus === 'loading'
 
     const currentTasks = filteredTasks(tasks[todolistId]);
 
@@ -88,15 +84,16 @@ const ToDoList: React.FC<PropsType> = (
     return <div>
         <h3><EditableSpan label="List name"
                           value={title}
-                          setValue={changeToDoListNameHandler}/>
+                          setValue={changeToDoListNameHandler}
+                          disabled={isDisabled}/>
 
-            <IconButton onClick={onRemoveTodolist} disabled={entityStatus === 'loading'}>
+            <IconButton onClick={onRemoveTodolist} disabled={isDisabled}>
                 <Delete/>
             </IconButton>
         </h3>
         <AddItemForm label="Task name"
                      addItem={createTaskHandler}
-                     isDisabled={entityStatus === 'loading'}/>
+                     disabled={isDisabled}/>
         {tasks && taskRender}
         <div>
             <Button

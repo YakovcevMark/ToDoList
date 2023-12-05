@@ -3,12 +3,13 @@ import s from "./Task.module.css"
 import EditableSpan from "./EditableSpan/EditableSpan";
 import {Checkbox, IconButton} from "@material-ui/core";
 import {Delete} from "@material-ui/icons";
-import {TaskStatuses, TaskType, UpdateTaskModelType} from "../api/todolistApi";
+import {TaskStatuses, UpdateTaskModelType} from "../api/todolistApi";
+import {TaskType} from "../state/tasksReducer";
 
 type TaskPropsType = {
     task: TaskType
     deleteTask: (id: string) => void
-    updateTask:(taskId:string, updateTaskModel:UpdateTaskModelType) => void
+    updateTask: (taskId: string, updateTaskModel: UpdateTaskModelType) => void
 }
 const Task: React.FC<TaskPropsType> = (
     {
@@ -22,17 +23,24 @@ const Task: React.FC<TaskPropsType> = (
         updateTask(task.id, {status});
     }
     const changeTaskNameHandler = (title: string) => {
-        updateTask(task.id,{title})
+        updateTask(task.id, {title})
     }
-
+    const isDisabled = task.entityStatus === "loading"
     return <>
         <div className={task.status ? s.done : ""} key={task.id}>
             <Checkbox
                 color="primary"
                 checked={!!task.status}
-                onClick={changeTaskCompletedStatusHandler}/>
-            <EditableSpan value={task.title || " "} setValue={changeTaskNameHandler}/>
-            <IconButton size="small" onClick={deleteTaskHandler}>
+                onClick={changeTaskCompletedStatusHandler}
+                disabled={isDisabled}/>
+            <EditableSpan
+                value={task.title || " "}
+                setValue={changeTaskNameHandler}
+                disabled={isDisabled}/>
+            <IconButton
+                size="small"
+                onClick={deleteTaskHandler}
+                disabled={isDisabled}>
                 <Delete fontSize="small"/>
             </IconButton>
         </div>

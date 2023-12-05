@@ -1,20 +1,22 @@
 import React, {ChangeEvent, KeyboardEvent, memo, useState} from "react";
 import {IconButton, TextField} from "@material-ui/core";
 import {AddBox} from "@material-ui/icons";
-export type ErrorType = null|string
+
+export type ErrorType = null | string
 type AddItemInputPropsType = {
     addItem: (title: string) => void
     label?: string
-    isDisabled?:boolean
+    disabled?: boolean
 }
 const AddItemForm: React.FC<AddItemInputPropsType> = (
     {
         addItem,
         label,
-        isDisabled
+        disabled
     }) => {
     const [title, setTitle] = useState<string>("");
     const [error, setError] = useState<ErrorType>(null);
+
     function onChangeHandler(e: ChangeEvent<HTMLInputElement>) {
         setTitle(e.currentTarget.value);
         setError(null);
@@ -22,17 +24,18 @@ const AddItemForm: React.FC<AddItemInputPropsType> = (
 
     function addNewTask() {
         const titleTrim = title.trim()
-        if (titleTrim !== "") {
-            addItem(titleTrim)
-            setTitle("");
-        } else {
-            setError("Field is required")
+        if (titleTrim) {
+            if (titleTrim.length < 100) {
+                addItem(titleTrim)
+                setTitle("");
+            } else {
+                setError("Max length 100 symbols")
+            }
         }
-
     }
 
     const onKeyDownHandler = (e: KeyboardEvent<HTMLInputElement>) => {
-        if (e.charCode === 13)
+        if (e.key === "Enter")
             addNewTask()
     }
 
@@ -41,18 +44,18 @@ const AddItemForm: React.FC<AddItemInputPropsType> = (
             <TextField
                 value={title}
                 onChange={onChangeHandler}
-                onKeyPress={onKeyDownHandler}
+                onKeyDown={onKeyDownHandler}
                 onBlur={addNewTask}
                 error={!!error}
                 label={label}
                 variant="outlined"
                 helperText={error}
-                disabled={isDisabled}
+                disabled={disabled}
             />
             <IconButton
                 color="primary"
                 onClick={addNewTask}
-                disabled={isDisabled}>
+                disabled={disabled}>
                 <AddBox/>
             </IconButton>
         </div>

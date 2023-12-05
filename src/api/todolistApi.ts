@@ -27,18 +27,18 @@ export type UpdateTaskModelType = {
     startDate?: string
     deadline?: string
 }
-export type TaskType = UpdateTaskModelType & {
+export type ResponseTaskType = UpdateTaskModelType & {
     id: string
     todoListId: string
     order?: number
     addedDate?: string
 }
 type GetTasksResponseType = {
-    items: TaskType[]
+    items: ResponseTaskType[]
     totalCount: number
     error: string
 }
-type ResponseType<D = {}> = {
+export type ResponseType<D = {}> = {
     resultCode: number
     messages: string[]
     fieldsErrors: string[]
@@ -73,12 +73,12 @@ export const tasksApi = {
         return instance.get<GetTasksResponseType>(`${todolistId}/tasks?count=${count}&page=${page}`)
     },
     createTask(todolistId: string, title: string) {
-        return instance.post<ResponseType<{ item: TaskType }>>(`${todolistId}/tasks`, {title})
+        return instance.post<ResponseType<{ item: ResponseTaskType }>>(`${todolistId}/tasks`, {title})
     },
     deleteTask(todolistId: string, taskId: string) {
         return instance.delete<ResponseType>(`${todolistId}/tasks/${taskId}`)
     },
     updateTask(todolistId: string, taskId: string, task: UpdateTaskModelType) {
-        return instance.put<ResponseType<{ item: TaskType }>>(`${todolistId}/tasks/${taskId}`, {...task})
+        return instance.put<ResponseType<{ item: ResponseTaskType }>>(`${todolistId}/tasks/${taskId}`, {...task})
     }
 }

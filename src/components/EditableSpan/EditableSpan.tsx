@@ -5,25 +5,27 @@ type EditableSpanPropsType = {
     value: string
     setValue: (title: string) => void
     label?: string
+    disabled?:boolean
 }
 const EditableSpan: React.FC<EditableSpanPropsType> = (
     {
         value,
         label,
-        setValue
+        setValue,
+        disabled
     }) => {
     const [newSpanText, setNewSpanText] = useState<string>(value)
     const [editMode, setEditMode] = useState<boolean>(false)
     const onEditMode = () => setEditMode(true)
     const offEditMode = () => {
         const newText = newSpanText.trim()
-        if (newText !== "") setValue(newText);
+        if (newText && newText !== value) setValue(newText);
         setEditMode(false)
     }
     const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
         setNewSpanText(e.currentTarget.value)
     }
-    return editMode
+    return editMode && !disabled
         ? <TextField
             value={newSpanText}
             onChange={onChangeHandler}

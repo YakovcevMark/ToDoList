@@ -10,14 +10,14 @@ beforeEach(() => {
     todolistId2 = v1()
     startState = {
         [todolistId1]: [
-            {id: "1", title: "CSS", status: TaskStatuses.New, todoListId:todolistId1},
-            {id: "2", title: "JS", status: TaskStatuses.Completed, todoListId:todolistId1},
-            {id: "3", title: "React", status: TaskStatuses.New, todoListId:todolistId1}
+            {id: "1", title: "CSS", status: TaskStatuses.New, todoListId:todolistId1, entityStatus: "succeeded"},
+            {id: "2", title: "JS", status: TaskStatuses.Completed, todoListId:todolistId1, entityStatus: "succeeded"},
+            {id: "3", title: "React", status: TaskStatuses.New, todoListId:todolistId1, entityStatus: "succeeded"}
         ],
         [todolistId2]: [
-            {id: "1", title: "bread", status: TaskStatuses.New, todoListId:todolistId2},
-            {id: "2", title: "milk", status: TaskStatuses.Completed, todoListId:todolistId2},
-            {id: "3", title: "tea", status: TaskStatuses.New, todoListId:todolistId2}
+            {id: "1", title: "bread", status: TaskStatuses.New, todoListId:todolistId2, entityStatus: "succeeded"},
+            {id: "2", title: "milk", status: TaskStatuses.Completed, todoListId:todolistId2, entityStatus: "succeeded"},
+            {id: "3", title: "tea", status: TaskStatuses.New, todoListId:todolistId2, entityStatus: "succeeded"}
         ]
     }
 })
