@@ -106,11 +106,14 @@ export const setTasksAC = (todoListId: string, tasks: ResponseTaskType[]) =>
     ({type: "SET_TASKS", todoListId, tasks} as const)
 export const changeTaskEntityStatusAC = (todoListId: string, taskId: string, entityStatus: RequestStatusType) =>
     ({type: "TASKS/CHANGE_ENTITY_STATUS", todoListId, taskId, entityStatus} as const)
+
+
+
 export const fetchTasks = (todoListId: string): AppThunk =>
     async (dispatch) => {
         dispatch(setAppStatusAC("loading"))
         const res = await tasksApi.getTasks(todoListId)
-        dispatch(setTasksAC(todoListId, res.data.items))
+        dispatch(setTasksAC(todoListId, res.items))
         dispatch(setAppStatusAC("succeeded"))
     }
 export const createTask = (todoListId: string, title: string): AppThunk =>
@@ -118,11 +121,11 @@ export const createTask = (todoListId: string, title: string): AppThunk =>
         try {
             dispatch(setAppStatusAC("loading"))
             const res = await tasksApi.createTask(todoListId, title)
-            if (res.data.resultCode === 0) {
-                dispatch(createTaskAC(todoListId, res.data.data.item))
+            if (res.resultCode === 0) {
+                dispatch(createTaskAC(todoListId, res.data.item))
                 dispatch(setAppStatusAC("succeeded"))
             } else {
-                handleServerAppError(res.data, dispatch)
+                handleServerAppError(res, dispatch)
             }
         } catch (e: any) {
             handleServerNetworkError(e, dispatch)
@@ -136,17 +139,15 @@ export const deleteTask = (todoListId: string, taskId: string): AppThunk =>
             dispatch(changeTaskEntityStatusAC(todoListId,taskId,"loading"))
 
             const res = await tasksApi.deleteTask(todoListId, taskId)
-            if (res.data.resultCode === 0) {
+            if (res.resultCode === 0) {
                 dispatch(deleteTaskAC(todoListId, taskId))
                 dispatch(setAppStatusAC("succeeded"))
             } else {
-                handleServerAppError(res.data, dispatch)
+                handleServerAppError(res, dispatch)
             }
         } catch (e: any) {
             handleServerNetworkError(e, dispatch)
         }
-
-
     }
 export const updateTask = (todoListId: string, taskId: string, updateTaskModel: UpdateTaskModelType): AppThunk =>
     async (dispatch, getState) => {
@@ -160,12 +161,12 @@ export const updateTask = (todoListId: string, taskId: string, updateTaskModel: 
                 ...currentTask,
                 ...updateTaskModel
             })
-            if (res.data.resultCode === 0) {
-                dispatch(updateTaskAC(todoListId, taskId, res.data.data.item))
+            if (res.resultCode === 0) {
+                dispatch(updateTaskAC(todoListId, taskId, res.data.item))
                 dispatch(setAppStatusAC("succeeded"))
                 dispatch(changeTaskEntityStatusAC(todoListId,taskId,"succeeded"))
             } else {
-                handleServerAppError(res.data, dispatch)
+                handleServerAppError(res, dispatch)
             }
         } catch (e: any) {
             handleServerNetworkError(e, dispatch)

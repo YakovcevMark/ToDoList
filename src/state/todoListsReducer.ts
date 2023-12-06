@@ -104,12 +104,12 @@ export const deleteTodoList = (todoListId: string): AppThunk =>
             dispatch(changeTodolistEntityStatusAC(todoListId, "loading"))
 
             const res = await todoListsApi.deleteList(todoListId)
-            if (res.data.resultCode === 0) {
+            if (res.resultCode === 0) {
                 dispatch(deleteTodoListAC(todoListId))
                 dispatch(setAppStatusAC("succeeded"))
                 dispatch(changeTodolistEntityStatusAC(todoListId, "succeeded"))
             } else {
-                handleServerAppError(res.data, dispatch)
+                handleServerAppError(res, dispatch)
             }
         } catch (e: any) {
             handleServerNetworkError(e, dispatch)
@@ -121,11 +121,11 @@ export const updateTodoListTitle = (todoListId: string, newTitle: string): AppTh
         try {
             dispatch(setAppStatusAC("loading"))
             const res = await todoListsApi.updateListTitle(todoListId, newTitle)
-            if (res.data.resultCode === 0) {
+            if (res.resultCode === 0) {
                 dispatch(changeTodoListTitleAC(todoListId, newTitle))
                 dispatch(setAppStatusAC("succeeded"))
             } else {
-                handleServerAppError(res.data, dispatch)
+                handleServerAppError(res, dispatch)
             }
         } catch (e: any) {
             handleServerNetworkError(e, dispatch)
@@ -136,8 +136,8 @@ export const createTodoList = (title: string): AppThunk =>
         try {
             dispatch(setAppStatusAC("loading"))
             const res = await todoListsApi.createList(title)
-            const neededDate = res.data.data.item
-            if (res.data.resultCode === 0) {
+            const neededDate = res.data.item
+            if (res.resultCode === 0) {
                 dispatch(createTodoListAC(
                     neededDate.title,
                     neededDate.id,
@@ -145,7 +145,7 @@ export const createTodoList = (title: string): AppThunk =>
                     neededDate.order))
                 dispatch(setAppStatusAC("succeeded"))
             } else {
-                handleServerAppError(res.data, dispatch)
+                handleServerAppError(res, dispatch)
             }
         } catch (e: any) {
             handleServerNetworkError(e, dispatch)

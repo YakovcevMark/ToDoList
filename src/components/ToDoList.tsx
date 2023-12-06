@@ -3,11 +3,10 @@ import EditableSpan from "./EditableSpan/EditableSpan";
 import {Button, IconButton} from "@material-ui/core";
 import {Delete} from "@material-ui/icons";
 import {changeTodoListFilterAC, deleteTodoList, FilterValuesType, updateTodoListTitle} from "../state/todoListsReducer";
-import {createTask, deleteTask, fetchTasks, TaskType, updateTask} from "../state/tasksReducer";
+import {createTask, fetchTasks, TaskType} from "../state/tasksReducer";
 import Task from "./ Task";
 import AddItemForm from "./AddItemInput/AddItemForm";
 import {useAppDispatch, useAppSelector} from "../state/hooks";
-import {UpdateTaskModelType} from "../api/todolistApi";
 import {RequestStatusType} from "../state/appReducer";
 
 
@@ -53,16 +52,8 @@ const ToDoList: React.FC<PropsType> = (
     }, [dispatch, todolistId])
 
 
-    const updateTaskHandler = useCallback((taskId: string, updateTaskModel: UpdateTaskModelType) => {
-        dispatch(updateTask(todolistId, taskId, updateTaskModel))
-    }, [dispatch, todolistId])
-
     const createTaskHandler = useCallback((title: string) => {
         dispatch(createTask(todolistId, title))
-    }, [dispatch, todolistId])
-
-    const deleteTaskHandler = useCallback((taskId: string) => {
-        dispatch(deleteTask(todolistId, taskId))
     }, [dispatch, todolistId])
 
     const isDisabled = entityStatus === 'loading'
@@ -73,14 +64,8 @@ const ToDoList: React.FC<PropsType> = (
         return currentTasks.map(t =>
             <Task task={t}
                   key={t.id}
-                  deleteTask={deleteTaskHandler}
-                  updateTask={updateTaskHandler}
             />)
-    }, [
-        currentTasks,
-        deleteTaskHandler,
-        updateTaskHandler
-    ])
+    }, [currentTasks])
     return <div>
         <h3><EditableSpan label="List name"
                           value={title}

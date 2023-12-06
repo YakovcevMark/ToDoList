@@ -3,27 +3,25 @@ import s from "./Task.module.css"
 import EditableSpan from "./EditableSpan/EditableSpan";
 import {Checkbox, IconButton} from "@material-ui/core";
 import {Delete} from "@material-ui/icons";
-import {TaskStatuses, UpdateTaskModelType} from "../api/todolistApi";
-import {TaskType} from "../state/tasksReducer";
+import {TaskStatuses} from "../api/todolistApi";
+import {deleteTask, TaskType, updateTask} from "../state/tasksReducer";
+import {useAppDispatch} from "../state/hooks";
 
 type TaskPropsType = {
     task: TaskType
-    deleteTask: (id: string) => void
-    updateTask: (taskId: string, updateTaskModel: UpdateTaskModelType) => void
 }
 const Task: React.FC<TaskPropsType> = (
     {
-        task,
-        deleteTask,
-        updateTask
+        task
     }) => {
-    const deleteTaskHandler = () => deleteTask(task.id);
+    const dispatch = useAppDispatch()
+    const deleteTaskHandler = () =>  dispatch(deleteTask(task.todoListId, task.id))
     const changeTaskCompletedStatusHandler = () => {
         const status = task.status ? TaskStatuses.New : TaskStatuses.Completed
-        updateTask(task.id, {status});
+        dispatch(updateTask(task.todoListId, task.id, {status}))
     }
     const changeTaskNameHandler = (title: string) => {
-        updateTask(task.id, {title})
+        dispatch(updateTask(task.todoListId, task.id, {title}))
     }
     const isDisabled = task.entityStatus === "loading"
     return <>
