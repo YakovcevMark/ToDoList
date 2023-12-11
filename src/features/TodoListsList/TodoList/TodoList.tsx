@@ -1,13 +1,13 @@
 import React, {memo, MouseEvent, useCallback, useEffect, useMemo} from "react";
-import EditableSpan from "./EditableSpan/EditableSpan";
+import EditableSpan from "../../../components/EditableSpan/EditableSpan";
 import {Button, IconButton} from "@material-ui/core";
 import {Delete} from "@material-ui/icons";
-import {changeTodoListFilterAC, deleteTodoList, FilterValuesType, updateTodoListTitle} from "../state/todoListsReducer";
-import {createTask, fetchTasks, TaskType} from "../state/tasksReducer";
-import Task from "./ Task";
-import AddItemForm from "./AddItemInput/AddItemForm";
-import {useAppDispatch, useAppSelector} from "../state/hooks";
-import {RequestStatusType} from "../state/appReducer";
+import {changeTodoListFilterAC, deleteTodoList, FilterValuesType, updateTodoListTitle} from "./todoListsReducer";
+import {createTask, fetchTasks, TaskType} from "../Task/tasksReducer";
+import Task from "../Task/ Task";
+import AddItemForm from "../../../components/AddItemInput/AddItemForm";
+import {useAppDispatch, useAppSelector} from "../../../utils/hooks";
+import {RequestStatusType} from "../../../app/appReducer";
 
 
 type PropsType = {
@@ -16,7 +16,7 @@ type PropsType = {
     filter: FilterValuesType
     entityStatus?: RequestStatusType
 }
-const ToDoList: React.FC<PropsType> = (
+const TodoList: React.FC<PropsType> = (
     {
         todolistId,
         title,
@@ -105,5 +105,5 @@ const ToDoList: React.FC<PropsType> = (
         </div>
     </div>
 }
-export default memo(ToDoList)
+export default memo(TodoList)
 

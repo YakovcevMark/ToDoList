@@ -1,11 +1,11 @@
 import React, {memo} from "react";
 import s from "./Task.module.css"
-import EditableSpan from "./EditableSpan/EditableSpan";
+import EditableSpan from "../../../components/EditableSpan/EditableSpan";
 import {Checkbox, IconButton} from "@material-ui/core";
 import {Delete} from "@material-ui/icons";
-import {TaskStatuses} from "../api/todolistApi";
-import {deleteTask, TaskType, updateTask} from "../state/tasksReducer";
-import {useAppDispatch} from "../state/hooks";
+import {TaskStatuses} from "../../../api/todolistApi";
+import {deleteTask, TaskType, updateTask} from "./tasksReducer";
+import {useAppDispatch} from "../../../utils/hooks";
 
 type TaskPropsType = {
     task: TaskType

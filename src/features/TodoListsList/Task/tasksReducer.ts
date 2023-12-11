@@ -1,8 +1,8 @@
-import {createTodoListAC, deleteTodoListAC, setTodoListsAC} from "./todoListsReducer";
-import {ResponseTaskType, ResponseTodoListType, tasksApi, UpdateTaskModelType} from "../api/todolistApi";
-import {AppThunk} from "./store";
-import {RequestStatusType, setAppStatusAC} from "./appReducer";
-import {handleServerAppError, handleServerNetworkError} from "../utils/error-utils";
+import {createTodoListAC, deleteTodoListAC, setTodoListsAC} from "../TodoList/todoListsReducer";
+import {ResponseTaskType, ResponseTodoListType, tasksApi, UpdateTaskModelType} from "../../../api/todolistApi";
+import {AppThunk} from "../../../app/store";
+import {RequestStatusType, setAppStatusAC} from "../../../app/appReducer";
+import {handleServerAppError, handleServerNetworkError} from "../../../utils/error-utils";
 
 
 export type TasksActionsType =

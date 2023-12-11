@@ -1,7 +1,7 @@
 import {createTaskAC, deleteTaskAC, tasksReducer, TasksStateT, updateTaskAC} from './tasksReducer';
-import {createTodoListAC, deleteTodoListAC, todoListsReducer, TodoListsStateT} from "./todoListsReducer";
+import {createTodoListAC, deleteTodoListAC, todoListsReducer, TodoListsStateT} from "../TodoList/todoListsReducer";
 import {v1} from "uuid";
-import {TaskStatuses} from "../api/todolistApi";
+import {TaskStatuses} from "../../../api/todolistApi";
 let todolistId1:string
 let todolistId2:string
 let startState: TasksStateT = {}
