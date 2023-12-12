@@ -4,15 +4,21 @@ import AddItemForm from "../../components/AddItemInput/AddItemForm";
 import {useAppDispatch, useAppSelector} from "../../utils/hooks";
 import {createTodoList, fetchTodoLists} from "./TodoList/todoListsReducer";
 import ToDoList from "./TodoList/TodoList";
+import {Navigate} from "react-router-dom";
+import {appPath} from "../../middleware/path";
 
 const TodoListsList: React.FC = () => {
 
+    const isLoggedIn = useAppSelector(state => state.auth.isLoggedIn)
     const todoLists = useAppSelector(state => state.todoLists)
     const dispatch = useAppDispatch()
 
     useEffect(() => {
+        if (!isLoggedIn) {
+            return
+        }
         dispatch(fetchTodoLists())
-    }, [dispatch])
+    }, [dispatch,isLoggedIn])
 
     const onCreateNewToDoList = useCallback((title: string) => {
         dispatch(createTodoList(title))
@@ -30,7 +36,9 @@ const TodoListsList: React.FC = () => {
                 </Paper>
             </Grid>)
     }, [todoLists])
-
+    if (!isLoggedIn) {
+        return <Navigate to={`${appPath}/login`}/>
+    }
     return <>
         <Grid container style={{padding: "20px"}}>
             <AddItemForm addItem={onCreateNewToDoList}/>

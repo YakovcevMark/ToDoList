@@ -1,4 +1,4 @@
-import {createTodoListAC, deleteTodoListAC, setTodoListsAC} from "../TodoList/todoListsReducer";
+import {clearTodoListsDataAC, createTodoListAC, deleteTodoListAC, setTodoListsAC} from "../TodoList/todoListsReducer";
 import {ResponseTaskType, ResponseTodoListType, tasksApi, UpdateTaskModelType} from "../../../api/todolistApi";
 import {AppThunk} from "../../../app/store";
 import {RequestStatusType, setAppStatusAC} from "../../../app/appReducer";
@@ -6,14 +6,15 @@ import {handleServerAppError, handleServerNetworkError} from "../../../utils/err
 
 
 export type TasksActionsType =
-    ReturnType<typeof deleteTaskAC> |
-    ReturnType<typeof createTaskAC> |
-    ReturnType<typeof updateTaskAC> |
-    ReturnType<typeof createTodoListAC> |
-    ReturnType<typeof deleteTodoListAC> |
-    ReturnType<typeof setTasksAC> |
-    ReturnType<typeof changeTaskEntityStatusAC> |
-    ReturnType<typeof setTodoListsAC>
+    | ReturnType<typeof deleteTaskAC>
+    | ReturnType<typeof createTaskAC>
+    | ReturnType<typeof updateTaskAC>
+    | ReturnType<typeof createTodoListAC>
+    | ReturnType<typeof deleteTodoListAC>
+    | ReturnType<typeof setTasksAC>
+    | ReturnType<typeof changeTaskEntityStatusAC>
+    | ReturnType<typeof setTodoListsAC>
+    | ReturnType<typeof clearTodoListsDataAC>
 
 export const initialState: TasksStateT = {}
 export type TaskType = ResponseTaskType & {
@@ -82,13 +83,16 @@ export const tasksReducer = (state: TasksStateT = initialState, action: TasksAct
                     return t.id === action.taskId
                         ? {
                             ...t,
-                            entityStatus:action.entityStatus
+                            entityStatus: action.entityStatus
                         }
                         : {
                             ...t,
                         }
                 })
             }
+        }
+        case "TODOLIST/CLEAR_DATA": {
+            return {}
         }
         default:
             return state
@@ -106,7 +110,6 @@ export const setTasksAC = (todoListId: string, tasks: ResponseTaskType[]) =>
     ({type: "SET_TASKS", todoListId, tasks} as const)
 export const changeTaskEntityStatusAC = (todoListId: string, taskId: string, entityStatus: RequestStatusType) =>
     ({type: "TASKS/CHANGE_ENTITY_STATUS", todoListId, taskId, entityStatus} as const)
-
 
 
 export const fetchTasks = (todoListId: string): AppThunk =>
@@ -136,7 +139,7 @@ export const deleteTask = (todoListId: string, taskId: string): AppThunk =>
     async (dispatch) => {
         try {
             dispatch(setAppStatusAC("loading"))
-            dispatch(changeTaskEntityStatusAC(todoListId,taskId,"loading"))
+            dispatch(changeTaskEntityStatusAC(todoListId, taskId, "loading"))
 
             const res = await tasksApi.deleteTask(todoListId, taskId)
             if (res.resultCode === 0) {
@@ -153,7 +156,7 @@ export const updateTask = (todoListId: string, taskId: string, updateTaskModel: 
     async (dispatch, getState) => {
         try {
             dispatch(setAppStatusAC("loading"))
-            dispatch(changeTaskEntityStatusAC(todoListId,taskId,"loading"))
+            dispatch(changeTaskEntityStatusAC(todoListId, taskId, "loading"))
             const tasks = getState().tasks
             const currentTask = tasks[todoListId].find(t => t.id === taskId)
 
@@ -164,7 +167,7 @@ export const updateTask = (todoListId: string, taskId: string, updateTaskModel: 
             if (res.resultCode === 0) {
                 dispatch(updateTaskAC(todoListId, taskId, res.data.item))
                 dispatch(setAppStatusAC("succeeded"))
-                dispatch(changeTaskEntityStatusAC(todoListId,taskId,"succeeded"))
+                dispatch(changeTaskEntityStatusAC(todoListId, taskId, "succeeded"))
             } else {
                 handleServerAppError(res, dispatch)
             }

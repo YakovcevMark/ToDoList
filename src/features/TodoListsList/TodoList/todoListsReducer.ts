@@ -13,12 +13,13 @@ export type TodoListType = ResponseTodoListType & {
 
 
 export type TodoListsActionsType =
-    ReturnType<typeof deleteTodoListAC> |
-    ReturnType<typeof createTodoListAC> |
-    ReturnType<typeof changeTodoListFilterAC> |
-    ReturnType<typeof changeTodoListTitleAC> |
-    ReturnType<typeof changeTodoListEntityStatusAC> |
-    ReturnType<typeof setTodoListsAC>
+    |ReturnType<typeof deleteTodoListAC>
+    |ReturnType<typeof createTodoListAC>
+    |ReturnType<typeof changeTodoListFilterAC>
+    |ReturnType<typeof changeTodoListTitleAC>
+    |ReturnType<typeof changeTodoListEntityStatusAC>
+    |ReturnType<typeof setTodoListsAC>
+    |ReturnType<typeof clearTodoListsDataAC>
 
 
 export const initialState = [] as TodoListType []
@@ -67,6 +68,9 @@ export const todoListsReducer = (state: TodoListsStateT = initialState, action: 
             }
             return [...state]
         }
+        case "TODOLIST/CLEAR_DATA": {
+            return []
+        }
         default:
             return state
     }
@@ -83,6 +87,8 @@ export const changeTodoListEntityStatusAC = (todoListId: string, entityStatus: R
     ({type: "TODOLIST/CHANGE_ENTITY_STATUS", todoListId, entityStatus} as const)
 export const setTodoListsAC = (todoLists: ResponseTodoListType[]) =>
     ({type: "SET_TODOS", todoLists} as const)
+export const clearTodoListsDataAC = () =>
+    ({type: "TODOLIST/CLEAR_DATA",} as const)
 
 export const fetchTodoLists = (): AppThunk =>
     async (dispatch) => {

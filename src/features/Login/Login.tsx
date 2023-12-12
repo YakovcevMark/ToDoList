@@ -4,6 +4,7 @@ import {useFormik} from "formik";
 import {login} from "./authReducer";
 import {useAppDispatch, useAppSelector} from "../../utils/hooks";
 import {Navigate} from "react-router-dom";
+import {appPath} from "../../middleware/path";
 
 type FormikErrorType = {
     email?: string
@@ -39,9 +40,11 @@ const Login: React.FC = () => {
             formik.resetForm()
         }
     })
+
     if (isLoggedIn) {
-        return <Navigate to={"/"}/>
+        return <Navigate to={`${appPath}/`}/>
     }
+
     return <Grid container justifyContent={'center'}>
         <Grid item justifyContent={'center'}>
 
