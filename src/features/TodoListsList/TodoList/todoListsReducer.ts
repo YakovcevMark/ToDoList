@@ -1,7 +1,7 @@
-import {todoListsApi, ResponseTodoListType} from "../../../api/todolistApi";
-import {AppThunk} from "../../../app/store";
-import {RequestStatusType, setAppStatusAC} from "../../../app/appReducer";
-import {handleServerAppError, handleServerNetworkError} from "../../../utils/error-utils";
+import {ResponseTodoListType, todoListsApi} from "api/todolistApi";
+import {AppThunk} from "app/store";
+import {RequestStatusType, setAppStatus} from "app/appSlice";
+import {handleServerAppError, handleServerNetworkError} from "utils/error-utils";
 
 export type FilterValuesType = "all" | "active" | "completed"
 
@@ -13,13 +13,13 @@ export type TodoListType = ResponseTodoListType & {
 
 
 export type TodoListsActionsType =
-    |ReturnType<typeof deleteTodoListAC>
-    |ReturnType<typeof createTodoListAC>
-    |ReturnType<typeof changeTodoListFilterAC>
-    |ReturnType<typeof changeTodoListTitleAC>
-    |ReturnType<typeof changeTodoListEntityStatusAC>
-    |ReturnType<typeof setTodoListsAC>
-    |ReturnType<typeof clearTodoListsDataAC>
+    | ReturnType<typeof deleteTodoListAC>
+    | ReturnType<typeof createTodoListAC>
+    | ReturnType<typeof changeTodoListFilterAC>
+    | ReturnType<typeof changeTodoListTitleAC>
+    | ReturnType<typeof changeTodoListEntityStatusAC>
+    | ReturnType<typeof setTodoListsAC>
+    | ReturnType<typeof clearTodoListsDataAC>
 
 
 export const initialState = [] as TodoListType []
@@ -29,6 +29,13 @@ export type TodoListsStateT = typeof initialState
 
 export const todoListsReducer = (state: TodoListsStateT = initialState, action: TodoListsActionsType): TodoListsStateT => {
     switch (action.type) {
+        case "SET_TODOS": {
+            return action.todoLists.map(tl => ({
+                ...tl,
+                filter: 'all',
+                entityStatus: "succeeded"
+            }))
+        }
         case "REMOVE_TODOLIST":
             return state.filter(tl => tl.id !== action.todoListId)
         case "ADD_TODOLIST":
@@ -41,32 +48,22 @@ export const todoListsReducer = (state: TodoListsStateT = initialState, action: 
                 entityStatus: "succeeded"
             }]
         case "CHANGE_TODOLIST_FILTER": {
-            const toDoList = state.find(tl => tl.id === action.todoListId)
-            if (toDoList) {
-                toDoList.filter = action.filterValue
-            }
-            return [...state]
+            return state.map(tl => tl.id === action.todoListId ? {
+                ...tl,
+                filter: action.filterValue,
+            } : tl)
         }
         case "CHANGE_TODOLIST_TITLE": {
-            const toDoList = state.find(tl => tl.id === action.todoListId)
-            if (toDoList) {
-                toDoList.title = action.newTodoListTitle
-            }
-            return [...state]
-        }
-        case "SET_TODOS": {
-            return action.todoLists.map(tl => ({
+            return state.map(tl => tl.id === action.todoListId ? {
                 ...tl,
-                filter: 'all',
-                entityStatus: "succeeded"
-            }))
+                title: action.newTodoListTitle,
+            } : tl)
         }
         case "TODOLIST/CHANGE_ENTITY_STATUS": {
-            const toDoList = state.find(tl => tl.id === action.todoListId)
-            if (toDoList) {
-                toDoList.entityStatus = action.entityStatus
-            }
-            return [...state]
+            return state.map(tl => tl.id === action.todoListId ? {
+                ...tl,
+                entityStatus: action.entityStatus,
+            } : tl)
         }
         case "TODOLIST/CLEAR_DATA": {
             return []
@@ -93,11 +90,11 @@ export const clearTodoListsDataAC = () =>
 export const fetchTodoLists = (): AppThunk =>
     async (dispatch) => {
         try {
-            dispatch(setAppStatusAC("loading"))
+            dispatch(setAppStatus("loading"))
             const res = await todoListsApi.getLists()
             if (res.data.length !== 0) {
                 dispatch(setTodoListsAC(res.data))
-                dispatch(setAppStatusAC("succeeded"))
+                dispatch(setAppStatus("succeeded"))
             }
         } catch (e: any) {
             handleServerNetworkError(e, dispatch)
@@ -106,13 +103,13 @@ export const fetchTodoLists = (): AppThunk =>
 export const deleteTodoList = (todoListId: string): AppThunk =>
     async (dispatch) => {
         try {
-            dispatch(setAppStatusAC("loading"))
+            dispatch(setAppStatus("loading"))
             dispatch(changeTodoListEntityStatusAC(todoListId, "loading"))
 
             const res = await todoListsApi.deleteList(todoListId)
             if (res.resultCode === 0) {
                 dispatch(deleteTodoListAC(todoListId))
-                dispatch(setAppStatusAC("succeeded"))
+                dispatch(setAppStatus("succeeded"))
                 dispatch(changeTodoListEntityStatusAC(todoListId, "succeeded"))
             } else {
                 handleServerAppError(res, dispatch)
@@ -125,11 +122,11 @@ export const deleteTodoList = (todoListId: string): AppThunk =>
 export const updateTodoListTitle = (todoListId: string, newTitle: string): AppThunk =>
     async (dispatch) => {
         try {
-            dispatch(setAppStatusAC("loading"))
+            dispatch(setAppStatus("loading"))
             const res = await todoListsApi.updateListTitle(todoListId, newTitle)
             if (res.resultCode === 0) {
                 dispatch(changeTodoListTitleAC(todoListId, newTitle))
-                dispatch(setAppStatusAC("succeeded"))
+                dispatch(setAppStatus("succeeded"))
             } else {
                 handleServerAppError(res, dispatch)
             }
@@ -140,7 +137,7 @@ export const updateTodoListTitle = (todoListId: string, newTitle: string): AppTh
 export const createTodoList = (title: string): AppThunk =>
     async (dispatch) => {
         try {
-            dispatch(setAppStatusAC("loading"))
+            dispatch(setAppStatus("loading"))
             const res = await todoListsApi.createList(title)
             const neededDate = res.data.item
             if (res.resultCode === 0) {
@@ -149,7 +146,7 @@ export const createTodoList = (title: string): AppThunk =>
                     neededDate.id,
                     neededDate.addedDate,
                     neededDate.order))
-                dispatch(setAppStatusAC("succeeded"))
+                dispatch(setAppStatus("succeeded"))
             } else {
                 handleServerAppError(res, dispatch)
             }

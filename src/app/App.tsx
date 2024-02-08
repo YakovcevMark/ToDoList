@@ -11,24 +11,26 @@ import {
     Typography
 } from "@material-ui/core";
 import {Menu} from "@material-ui/icons";
-import {useAppDispatch, useAppSelector} from "../utils/hooks";
-import {ErrorSnackbar} from "../components/ErrorSnachbar/ErrorSnachbar";
+import {useAppDispatch, useAppSelector} from "utils/hooks";
+import {ErrorSnackbar} from "components/ErrorSnachbar/ErrorSnachbar";
 import TodoListsList from "../features/TodoListsList/TodoListsList";
 import {Navigate, Route, Routes} from "react-router-dom";
 import Login from "../features/Login/Login";
-import {appPath} from "../middleware/path";
-import {initializeApp} from "./appReducer";
-import {logout} from "../features/Login/authReducer";
+import {initializeApp, selectAppStatus, selectIsInitialized} from "app/appSlice";
+import {logout} from "features/Login/authReducer";
+import {appPath} from "middleware/path";
 
 const App: React.FC = () => {
-    const status = useAppSelector(state => state.app.status)
-    const isInitialized = useAppSelector(state => state.app.isInitialized)
+    const status = useAppSelector(selectAppStatus)
+    const isInitialized = useAppSelector(selectIsInitialized)
     const isLoggedIn = useAppSelector(state => state.auth.isLoggedIn)
     const dispatch = useAppDispatch()
     useLayoutEffect(() => {
         dispatch(initializeApp())
     }, [dispatch])
-    const logoutHandler = useCallback(() => {dispatch(logout())},[dispatch])
+    const logoutHandler = useCallback(() => {
+        dispatch(logout())
+    }, [dispatch])
     if (!isInitialized) {
         return <div
             style={{position: 'fixed', top: '30%', textAlign: 'center', width: '100%'}}>
@@ -49,16 +51,18 @@ const App: React.FC = () => {
                     {isLoggedIn
                         ? <Button
                             color="inherit"
-                            onClick = {logoutHandler}>
+                            onClick={logoutHandler}>
                             Logout
                         </Button>
                         :
                         // <NavLink to={`${appPath}/login`}>
-                            <Button
-                                color="inherit"
-                                onClick = {() => {return <Navigate to={`${appPath}/login`}/>}}>
-                                Login
-                            </Button>
+                        <Button
+                            color="inherit"
+                            onClick={() => {
+                                return <Navigate to={`${appPath}/login`}/>
+                            }}>
+                            Login
+                        </Button>
                         // </NavLink>
                     }
                 </Toolbar>

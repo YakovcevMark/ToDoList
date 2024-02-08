@@ -1,7 +1,7 @@
-import {AppThunk} from "../../app/store";
-import {authAPI} from "../../api/todolistApi";
-import {handleServerAppError, handleServerNetworkError} from "../../utils/error-utils";
-import {setAppStatusAC} from "../../app/appReducer";
+import {AppThunk} from "app/store";
+import {authAPI} from "api/todolistApi";
+import {handleServerAppError, handleServerNetworkError} from "utils/error-utils";
+import {setAppStatus} from "app/appSlice";
 import {FormikValues} from "formik";
 import {clearTodoListsDataAC} from "../TodoListsList/TodoList/todoListsReducer";
 
@@ -40,12 +40,12 @@ export const setIsLoggedIn = (v: boolean) => ({
 export const login = (data: FormikValues): AppThunk =>
     async (dispatch) => {
         try {
-            dispatch(setAppStatusAC("loading"))
+            dispatch(setAppStatus("loading"))
             const res = await authAPI.login(data)
             if (res.resultCode === 0) {
                 // dispatch(loginAC(res.data))
                 dispatch(setIsLoggedIn(true))
-                dispatch(setAppStatusAC("succeeded"))
+                dispatch(setAppStatus("succeeded"))
             } else {
                 handleServerAppError(res, dispatch)
             }
@@ -56,13 +56,13 @@ export const login = (data: FormikValues): AppThunk =>
 export const logout = (): AppThunk =>
     async (dispatch) => {
         try {
-            dispatch(setAppStatusAC("loading"))
+            dispatch(setAppStatus("loading"))
             const res = await authAPI.logout()
             if (res.resultCode === 0) {
                 // dispatch(loginAC(res.data))
                 dispatch(setIsLoggedIn(false))
                 dispatch(clearTodoListsDataAC())
-                dispatch(setAppStatusAC("succeeded"))
+                dispatch(setAppStatus("succeeded"))
             } else {
                 handleServerAppError(res, dispatch)
             }

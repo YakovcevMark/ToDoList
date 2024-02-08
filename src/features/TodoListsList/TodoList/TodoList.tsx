@@ -7,7 +7,7 @@ import {createTask, fetchTasks, TaskType} from "../Task/tasksReducer";
 import Task from "../Task/ Task";
 import AddItemForm from "../../../components/AddItemInput/AddItemForm";
 import {useAppDispatch, useAppSelector} from "../../../utils/hooks";
-import {RequestStatusType} from "../../../app/appReducer";
+import {RequestStatusType} from "app/appSlice";
 
 
 type PropsType = {
