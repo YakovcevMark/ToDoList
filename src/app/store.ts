@@ -1,5 +1,5 @@
 import {combineReducers} from "redux";
-import {TodoListsActionsType, todoListsReducer} from "features/TodoListsList/TodoList/todoListsReducer";
+import {todoListsReducer} from "features/TodoListsList/TodoList/todoListsReducer";
 import {TasksActionsType, tasksReducer} from "features/TodoListsList/Task/tasksReducer";
 import {ThunkAction} from "redux-thunk"
 import {appReducer, AppReducerActionsType} from "app/appSlice";
@@ -18,7 +18,7 @@ export const store = configureStore({
 
 type AppActionsType =
     TasksActionsType |
-    TodoListsActionsType |
+    // TodoListsActionsType |
     AppReducerActionsType |
     AuthReducerActionsType
 export type RootState = ReturnType<typeof store.getState>

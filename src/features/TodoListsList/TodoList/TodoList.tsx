@@ -2,23 +2,23 @@ import React, {memo, MouseEvent, useCallback, useEffect, useMemo} from "react";
 import EditableSpan from "../../../components/EditableSpan/EditableSpan";
 import {Button, IconButton} from "@material-ui/core";
 import {Delete} from "@material-ui/icons";
-import {changeTodoListFilterAC, deleteTodoList, FilterValuesType, updateTodoListTitle} from "./todoListsReducer";
+import {changeTodoListFilter, deleteTodoList, FilterValuesType, updateTodoListTitle} from "./todoListsReducer";
 import {createTask, fetchTasks, TaskType} from "../Task/tasksReducer";
 import Task from "../Task/ Task";
 import AddItemForm from "../../../components/AddItemInput/AddItemForm";
-import {useAppDispatch, useAppSelector} from "../../../utils/hooks";
+import {useAppDispatch, useAppSelector} from "utils/hooks";
 import {RequestStatusType} from "app/appSlice";
 
 
 type PropsType = {
     title: string
-    todolistId: string
+    id: string
     filter: FilterValuesType
     entityStatus?: RequestStatusType
 }
 const TodoList: React.FC<PropsType> = (
     {
-        todolistId,
+        id,
         title,
         filter,
         entityStatus
@@ -27,8 +27,8 @@ const TodoList: React.FC<PropsType> = (
     const dispatch = useAppDispatch()
 
     useEffect(() => {
-        dispatch(fetchTasks(todolistId))
-    }, [dispatch, todolistId])
+        dispatch(fetchTasks(id))
+    }, [dispatch, id])
 
 
     const filteredTasks = (tasks: TaskType[]): TaskType[] => {
@@ -40,25 +40,25 @@ const TodoList: React.FC<PropsType> = (
     }
 
     const changeFilterHandler = useCallback((e: MouseEvent<HTMLButtonElement>) => {
-        dispatch(changeTodoListFilterAC(todolistId, e.currentTarget.value as FilterValuesType))
-    }, [dispatch, todolistId])
+        dispatch(changeTodoListFilter({id, filter: e.currentTarget.value as FilterValuesType}))
+    }, [dispatch, id])
 
     const changeToDoListNameHandler = useCallback((title: string) => {
-        dispatch(updateTodoListTitle(todolistId, title))
-    }, [dispatch, todolistId])
+        dispatch(updateTodoListTitle({id, title}))
+    }, [dispatch, id])
 
     const onRemoveTodolist = useCallback(() => {
-        dispatch(deleteTodoList(todolistId))
-    }, [dispatch, todolistId])
+        dispatch(deleteTodoList(id))
+    }, [dispatch, id])
 
 
     const createTaskHandler = useCallback((title: string) => {
-        dispatch(createTask(todolistId, title))
-    }, [dispatch, todolistId])
+        dispatch(createTask(id, title))
+    }, [dispatch, id])
 
     const isDisabled = entityStatus === 'loading'
 
-    const currentTasks = filteredTasks(tasks[todolistId]);
+    const currentTasks = filteredTasks(tasks[id]);
 
     const taskRender = useMemo(() => {
         return currentTasks.map(t =>

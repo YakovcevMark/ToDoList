@@ -54,17 +54,7 @@ export const tasksReducer = (state: TasksStateT = initialState, action: TasksAct
                 })
             }
         }
-        case "REMOVE_TODOLIST": {
-            delete state[action.todoListId]
-            return {...state}
-        }
-        case "ADD_TODOLIST":
-            return {...state, [action.newTodoListId]: []}
-        case "SET_TODOS": {
-            const stateCopy = {...state}
-            action.todoLists.forEach((tl: ResponseTodoListType) => stateCopy[tl.id] = [])
-            return stateCopy
-        }
+
         case "SET_TASKS": {
             return {
                 ...state,
@@ -81,7 +71,19 @@ export const tasksReducer = (state: TasksStateT = initialState, action: TasksAct
                         } : t )
             }
         }
-        case "TODOLIST/CLEAR_DATA": {
+        case "REMOVE_TODOLIST": {
+            const stateCopy = {...state}
+            delete stateCopy[action.payload]
+            return {...stateCopy}
+        }
+        case "ADD_TODOLIST":
+            return {...state, [action.payload.id]: []}
+        case "SET_TODOS": {
+            const stateCopy = {...state}
+            action.payload.forEach((tl: ResponseTodoListType) => stateCopy[tl.id] = [])
+            return stateCopy
+        }
+        case "CLEAR_DATA": {
             return {}
         }
         default:
