@@ -1,7 +1,12 @@
-import {clearTodoListsDataAC, createTodoListAC, deleteTodoListAC, setTodoListsAC} from "../TodoList/todoListsReducer";
+import {
+    clearTodoListsDataAC,
+    createTodoListAC,
+    deleteTodoListAC,
+    setTodoListsAC
+} from "../TodoList/todoListsReducer";
 import {ResponseTaskType, ResponseTodoListType, tasksApi, UpdateTaskModelType} from "api/todolistApi";
-import {RequestStatusType, setAppStatus} from "app/appSlice";
-import {handleServerAppError, handleServerNetworkError} from "utils/error-utils";
+import {RequestStatusType, setAppStatus} from "app/appSlice/appSlice";
+// import {handleServerAppError, handleServerNetworkError} from "utils/error-utils";
 import {AppThunk} from "app/store";
 
 
@@ -16,12 +21,73 @@ export type TasksActionsType =
     | ReturnType<typeof setTodoListsAC>
     | ReturnType<typeof clearTodoListsDataAC>
 
-export const initialState: TasksStateT = {}
 export type TaskType = ResponseTaskType & {
     entityStatus: RequestStatusType
 }
 
 export type TasksStateT = { [todoListId: string]: TaskType[] }
+export const initialState: TasksStateT = {}
+
+// const tasksSlice = createAsyncSlice({
+//     name: "tasks",
+//     initialState,
+//     selectors: {},
+//     reducers: create => ({
+//         fetchTasks: create.asyncThunk(
+//             async (todoListId: string, {dispatch}) => {
+//                 try {
+//                     dispatch(setAppStatus("loading"))
+//                     const res = await tasksApi.getTasks(todoListId)
+//                     return {todoListId, res.items}
+//                 } catch (e: any) {
+//                     handleServerNetworkError(e, dispatch)
+//                 } finally {
+//                     dispatch(setAppStatus("succeeded"))
+//                 }
+//             },
+//             {
+//                 fulfilled: (state, action) => {
+//                     state[todoListId] = action.payload
+//                 }
+//
+//             }),
+//         deleteTaskAC: create.reducer((state, action) => {
+//
+//         }),
+//         createTaskAC:
+//             create.reducer((state, action) => {
+//
+//             }),
+//         updateTaskAC:
+//             create.reducer((state, action) => {
+//
+//             }),
+//         setTasksAC:
+//             create.reducer((state, action) => {
+//
+//             }),
+//         changeTaskEntityStatusAC:
+//             create.reducer((state, action) => {
+//
+//             }),
+//
+//     }),
+//     extraReducers: builder => {
+//         builder
+//             .addCase(createTodoListAC, (state, action) => {
+//
+//             })
+//             .addCase(deleteTodoListAC, (state, action) => {
+//
+//             })
+//             .addCase(setTodoListsAC, (state, action) => {
+//
+//             })
+//             .addCase(clearTodoListsDataAC, (state) => {
+//
+//             })
+//     },
+// })
 
 export const tasksReducer = (state: TasksStateT = initialState, action: TasksActionsType): TasksStateT => {
     switch (action.type) {
@@ -120,10 +186,10 @@ export const createTask = (todoListId: string, title: string): AppThunk =>
                 dispatch(createTaskAC(todoListId, res.data.item))
                 dispatch(setAppStatus("succeeded"))
             } else {
-                handleServerAppError(res, dispatch)
+                // handleServerAppError(res, dispatch)
             }
         } catch (e: any) {
-            handleServerNetworkError(e, dispatch)
+            // handleServerNetworkError(e, dispatch)
         }
 
     }
@@ -138,10 +204,10 @@ export const deleteTask = (todoListId: string, taskId: string): AppThunk =>
                 dispatch(deleteTaskAC(todoListId, taskId))
                 dispatch(setAppStatus("succeeded"))
             } else {
-                handleServerAppError(res, dispatch)
+                // handleServerAppError(res, dispatch)
             }
         } catch (e: any) {
-            handleServerNetworkError(e, dispatch)
+            // handleServerNetworkError(e, dispatch)
         }
     }
 export const updateTask = (todoListId: string, taskId: string, updateTaskModel: UpdateTaskModelType): AppThunk =>
@@ -161,12 +227,12 @@ export const updateTask = (todoListId: string, taskId: string, updateTaskModel: 
                 dispatch(setAppStatus("succeeded"))
                 dispatch(changeTaskEntityStatusAC(todoListId, taskId, "succeeded"))
             } else {
-                handleServerAppError(res, dispatch)
+                // handleServerAppError(res, dispatch)
             }
         } catch (e: any) {
-            handleServerNetworkError(e, dispatch)
+            // handleServerNetworkError(e, dispatch)
         }
     }
 
-   
+
 

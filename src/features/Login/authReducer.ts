@@ -1,7 +1,7 @@
 import {AppThunk} from "app/store";
 import {authAPI} from "api/todolistApi";
-import {handleServerAppError, handleServerNetworkError} from "utils/error-utils";
-import {setAppStatus} from "app/appSlice";
+// import {handleServerAppError, handleServerNetworkError} from "utils/error-utils";
+import {setAppStatus} from "app/appSlice/appSlice";
 import {FormikValues} from "formik";
 import {clearTodoListsDataAC} from "../TodoListsList/TodoList/todoListsReducer";
 
@@ -47,10 +47,10 @@ export const login = (data: FormikValues): AppThunk =>
                 dispatch(setIsLoggedIn(true))
                 dispatch(setAppStatus("succeeded"))
             } else {
-                handleServerAppError(res, dispatch)
+                // handleServerAppError(res, dispatch)
             }
         } catch (e: any) {
-            handleServerNetworkError(e, dispatch)
+            // handleServerNetworkError(e, dispatch)
         }
     }
 export const logout = (): AppThunk =>
@@ -64,10 +64,10 @@ export const logout = (): AppThunk =>
                 dispatch(clearTodoListsDataAC())
                 dispatch(setAppStatus("succeeded"))
             } else {
-                handleServerAppError(res, dispatch)
+                // handleServerAppError(res, dispatch)
             }
         } catch (e: any) {
-            handleServerNetworkError(e, dispatch)
+            // handleServerNetworkError(e, dispatch)
         }
     }
 

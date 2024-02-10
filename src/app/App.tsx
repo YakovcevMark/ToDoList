@@ -14,13 +14,14 @@ import {Menu} from "@material-ui/icons";
 import {useAppDispatch, useAppSelector} from "utils/hooks";
 import {ErrorSnackbar} from "components/ErrorSnachbar/ErrorSnachbar";
 import TodoListsList from "../features/TodoListsList/TodoListsList";
-import {Navigate, Route, Routes} from "react-router-dom";
+import {Navigate, Route, Routes, useNavigate} from "react-router-dom";
 import Login from "../features/Login/Login";
-import {initializeApp, selectAppStatus, selectIsInitialized} from "app/appSlice";
+import {initializeApp, selectAppStatus, selectIsInitialized} from "app/appSlice/appSlice";
 import {logout} from "features/Login/authReducer";
 import {appPath} from "middleware/path";
 
 const App: React.FC = () => {
+    const nav = useNavigate()
     const status = useAppSelector(selectAppStatus)
     const isInitialized = useAppSelector(selectIsInitialized)
     const isLoggedIn = useAppSelector(state => state.auth.isLoggedIn)
@@ -58,9 +59,7 @@ const App: React.FC = () => {
                         // <NavLink to={`${appPath}/login`}>
                         <Button
                             color="inherit"
-                            onClick={() => {
-                                return <Navigate to={`${appPath}/login`}/>
-                            }}>
+                            onClick={() => nav(`${appPath}/login`)}>
                             Login
                         </Button>
                         // </NavLink>
