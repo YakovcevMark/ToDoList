@@ -53,7 +53,7 @@ const TodoList: React.FC<PropsType> = (
 
 
     const createTaskHandler = useCallback((title: string) => {
-        dispatch(createTask(id, title))
+        dispatch(createTask({todoListId: id, title}))
     }, [dispatch, id])
 
     const isDisabled = entityStatus === 'loading'

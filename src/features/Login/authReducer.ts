@@ -1,73 +1,51 @@
-import {AppThunk} from "app/store";
 import {authAPI} from "api/todolistApi";
-// import {handleServerAppError, handleServerNetworkError} from "utils/error-utils";
-import {setAppStatus} from "app/appSlice/appSlice";
+import {createAsyncSlice} from "middleware/createAsyncSlice";
 import {FormikValues} from "formik";
-import {clearTodoListsDataAC} from "../TodoListsList/TodoList/todoListsReducer";
+import {PayloadAction} from "@reduxjs/toolkit";
 
 const initialState = {
     isLoggedIn: false,
-    // sessionUserData: {login:null,email:null,id:null} as SessionUserInfoType
 }
-type AuthReducerStateType = typeof initialState
-export type AuthReducerActionsType =
-    ReturnType<typeof setIsLoggedIn>
-// ReturnType<typeof logoutAC>
-export const authReducer = (state: AuthReducerStateType = initialState, action: AuthReducerActionsType): AuthReducerStateType => {
-    switch (action.type) {
-        // case "AUTH/LOGIN": {
-        //     return {...state, ...action.data}
-        // }
-        // case "AUTH/LOGOUT": {
-        //     return {...state, sessionUserData: {login:null,email:null,id:null}}
-        // }
-        case "AUTH/SET_IS_LOGGED_IN": {
-            return {...state, isLoggedIn: action.v}
-        }
-        default:
-            return state
 
-    }
-}
-export const setIsLoggedIn = (v: boolean) => ({
-    type: "AUTH/SET_IS_LOGGED_IN", v
-} as const)
-// const loginAC = (data: SessionUserInfoType) =>
-//     ({type: "AUTH/LOGIN", data} as const)
-// const logoutAC = () =>
-//     ({type: "AUTH/LOGOUT"} as const)
-
-export const login = (data: FormikValues): AppThunk =>
-    async (dispatch) => {
-        try {
-            dispatch(setAppStatus("loading"))
-            const res = await authAPI.login(data)
-            if (res.resultCode === 0) {
-                // dispatch(loginAC(res.data))
-                dispatch(setIsLoggedIn(true))
-                dispatch(setAppStatus("succeeded"))
-            } else {
-                // handleServerAppError(res, dispatch)
-            }
-        } catch (e: any) {
-            // handleServerNetworkError(e, dispatch)
-        }
-    }
-export const logout = (): AppThunk =>
-    async (dispatch) => {
-        try {
-            dispatch(setAppStatus("loading"))
-            const res = await authAPI.logout()
-            if (res.resultCode === 0) {
-                // dispatch(loginAC(res.data))
-                dispatch(setIsLoggedIn(false))
-                dispatch(clearTodoListsDataAC())
-                dispatch(setAppStatus("succeeded"))
-            } else {
-                // handleServerAppError(res, dispatch)
-            }
-        } catch (e: any) {
-            // handleServerNetworkError(e, dispatch)
-        }
-    }
+const authSlice = createAsyncSlice({
+    name: "auth",
+    initialState,
+    selectors: {
+        selectIsLoggedIn: s => s.isLoggedIn
+    },
+    reducers: create => ({
+        setIsLoggedIn: create.reducer((s, a: PayloadAction<boolean>) => {
+            s.isLoggedIn = a.payload
+        }),
+        login: create.asyncThunk(
+            async (data: FormikValues) => {
+                const res = await authAPI.login(data)
+                if (res.resultCode === 0) {
+                    return
+                } else {
+                    throw new Error(res.messages[0])
+                }
+            }, {
+                fulfilled: s => {
+                    s.isLoggedIn = true
+                }
+            }),
+        logout: create.asyncThunk(
+            async (_: void) => {
+                const res = await authAPI.logout()
+                if (res.resultCode === 0) {
+                    return
+                } else {
+                    throw new Error(res.messages[0])
+                }
+            }, {
+                fulfilled: s => {
+                    s.isLoggedIn = false
+                }
+            })
+    }),
+})
+export const {selectIsLoggedIn} = authSlice.selectors
+export const {setIsLoggedIn, login, logout} = authSlice.actions
+export const authReducer = authSlice.reducer
 

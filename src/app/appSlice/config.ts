@@ -4,31 +4,49 @@ import {
     fetchTodoLists,
     updateTodoListTitle
 } from "features/TodoListsList/TodoList/todoListsReducer";
-import {isFulfilled, isPending, isRejected, isRejectedWithValue} from "@reduxjs/toolkit";
+import {login, logout} from "features/Login/authReducer";
+import {isFulfilled, isPending, isRejected} from "@reduxjs/toolkit";
+import {createTask, deleteTask, fetchTasks, updateTask} from "features/TodoListsList/Task/tasksReducer";
+
 
 const pending = isPending(
     fetchTodoLists,
     updateTodoListTitle,
     createTodoList,
     deleteTodoList,
+    login,
+    logout,
+    fetchTasks,
+    deleteTask,
+    updateTask,
+    createTask
 );
 const fulfilled = isFulfilled(
     fetchTodoLists,
     updateTodoListTitle,
     createTodoList,
     deleteTodoList,
+    login,
+    logout,
+    fetchTasks,
+    deleteTask,
+    updateTask,
+    createTask
 )
 const rejected = isRejected(
     fetchTodoLists,
     updateTodoListTitle,
     createTodoList,
     deleteTodoList,
-)
-const rejectedWithValue = isRejectedWithValue(
-    fetchTodoLists,
-    updateTodoListTitle,
-    createTodoList,
-    deleteTodoList,
+    login,
+    logout,
+    fetchTasks,
+    deleteTask,
+    updateTask,
+    createTask
 )
 
-export {pending, fulfilled, rejected, rejectedWithValue}
+
+export {pending, fulfilled, rejected,
+    // rejectedWithValue
+}

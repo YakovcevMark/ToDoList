@@ -1,8 +1,8 @@
 import {authAPI} from "api/todolistApi";
-import {Action, PayloadAction} from "@reduxjs/toolkit";
-import {setIsLoggedIn} from "features/Login/authReducer";
-import {fulfilled, pending, rejected, rejectedWithValue} from "app/appSlice/config";
+import {PayloadAction} from "@reduxjs/toolkit";
+import {fulfilled, pending, rejected} from "app/appSlice/config";
 import {createAsyncSlice} from "middleware/createAsyncSlice";
+import {setIsLoggedIn} from "features/Login/authReducer";
 
 
 export type RequestStatusType = "idle" | "loading" | "succeeded" | "failed"
@@ -57,27 +57,17 @@ const appSlice = createAsyncSlice({
             .addMatcher(fulfilled, state => {
                 state.status = "succeeded"
             })
+
             .addMatcher(rejected, (state, action) => {
-                debugger
                 state.status = "failed"
                 state.error = action.error.message || "Some error occurred"
             })
-            .addMatcher(rejectedWithValue, (state, action) => {
-                debugger
-                state.status = "failed"
-                state.error = action.error.message || "Some error occurred"
-            })
-
     }
-
 })
+
 export const appReducer = appSlice.reducer
 export const {
     setAppStatus, setAppError, initializeApp
 } = appSlice.actions
 
-export type AppReducerActionsType =Action<string>
-    // ReturnType<typeof setAppStatus> |
-    // ReturnType<typeof setAppIsInitialized> |
-    // ReturnType<typeof setAppError>
 export const {selectAppError, selectAppStatus, selectIsInitialized} = appSlice.selectors

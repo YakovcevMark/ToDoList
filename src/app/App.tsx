@@ -17,14 +17,14 @@ import TodoListsList from "../features/TodoListsList/TodoListsList";
 import {Navigate, Route, Routes, useNavigate} from "react-router-dom";
 import Login from "../features/Login/Login";
 import {initializeApp, selectAppStatus, selectIsInitialized} from "app/appSlice/appSlice";
-import {logout} from "features/Login/authReducer";
+import {logout, selectIsLoggedIn} from "features/Login/authReducer";
 import {appPath} from "middleware/path";
 
 const App: React.FC = () => {
     const nav = useNavigate()
     const status = useAppSelector(selectAppStatus)
     const isInitialized = useAppSelector(selectIsInitialized)
-    const isLoggedIn = useAppSelector(state => state.auth.isLoggedIn)
+    const isLoggedIn = useAppSelector(selectIsLoggedIn)
     const dispatch = useAppDispatch()
     useLayoutEffect(() => {
         dispatch(initializeApp())

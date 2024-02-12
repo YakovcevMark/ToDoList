@@ -3,36 +3,42 @@ import s from "./Task.module.css"
 import EditableSpan from "../../../components/EditableSpan/EditableSpan";
 import {Checkbox, IconButton} from "@material-ui/core";
 import {Delete} from "@material-ui/icons";
-import {TaskStatuses} from "../../../api/todolistApi";
+import {TaskStatuses} from "api/todolistApi";
 import {deleteTask, TaskType, updateTask} from "./tasksReducer";
-import {useAppDispatch} from "../../../utils/hooks";
+import {useAppDispatch} from "utils/hooks";
 
 type TaskPropsType = {
     task: TaskType
 }
 const Task: React.FC<TaskPropsType> = (
     {
-        task
+        task: {
+            todoListId,
+            title,
+            status,
+            id,
+            entityStatus
+        }
     }) => {
     const dispatch = useAppDispatch()
-    const deleteTaskHandler = () =>  dispatch(deleteTask(task.todoListId, task.id))
+    const deleteTaskHandler = () => dispatch(deleteTask({todoListId, taskId: id}))
     const changeTaskCompletedStatusHandler = () => {
-        const status = task.status ? TaskStatuses.New : TaskStatuses.Completed
-        dispatch(updateTask(task.todoListId, task.id, {status}))
+        const newStatus = status ? TaskStatuses.New : TaskStatuses.Completed
+        dispatch(updateTask({todoListId, taskId: id, updateTaskModel: {status: newStatus}}))
     }
     const changeTaskNameHandler = (title: string) => {
-        dispatch(updateTask(task.todoListId, task.id, {title}))
+        dispatch(updateTask({todoListId, taskId: id, updateTaskModel: {title}}))
     }
-    const isDisabled = task.entityStatus === "loading"
+    const isDisabled = entityStatus === "loading"
     return <>
-        <div className={task.status ? s.done : ""} key={task.id}>
+        <div className={status ? s.done : ""} key={id}>
             <Checkbox
                 color="primary"
-                checked={!!task.status}
+                checked={!!status}
                 onClick={changeTaskCompletedStatusHandler}
                 disabled={isDisabled}/>
             <EditableSpan
-                value={task.title || " "}
+                value={title || " "}
                 setValue={changeTaskNameHandler}
                 disabled={isDisabled}/>
             <IconButton

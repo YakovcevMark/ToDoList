@@ -66,51 +66,55 @@ export const todoListsApi = {
     getLists() {
         return instance.get<ResponseTodoListType[]>(`todo-lists/`)
     },
-    createList(title: string) {
-        return instance.post<ResponseType<{ item: ResponseTodoListType }>>(`todo-lists/`, {title})
-            .then(res => res.data)
+    async createList(title: string) {
+        let res = await instance.post<ResponseType<{ item: ResponseTodoListType }>>(`todo-lists/`, {title});
+        return res.data;
     },
-    deleteList(todolistId: string) {
-        return instance.delete<ResponseType>(`todo-lists/${todolistId}`)
-            .then(res => res.data)
+    async deleteList(todolistId: string) {
+        let res = await instance.delete<ResponseType>(`todo-lists/${todolistId}`);
+        return res.data;
 
     },
-    updateListTitle(todolistId: string, title: string) {
-        return instance.put<ResponseType>(`todo-lists/${todolistId}`, {title})
-            .then(res => res.data)
+    async updateListTitle(todolistId: string, title: string) {
+        let res = await instance.put<ResponseType>(`todo-lists/${todolistId}`, {title});
+        return res.data;
 
     }
 }
 export const tasksApi = {
-    getTasks(todolistId: string, count: number = 100, page: number = 1) {
-        return instance.get<GetTasksResponseType>(`todo-lists/${todolistId}/tasks?count=${count}&page=${page}`)
-            .then(res => res.data)
+    async getTasks(todolistId: string, count: number = 100, page: number = 1) {
+        let res = await instance.get<GetTasksResponseType>(`todo-lists/${todolistId}/tasks?count=${count}&page=${page}`);
+        return res.data;
     },
-    createTask(todolistId: string, title: string) {
-        return instance.post<ResponseType<{ item: ResponseTaskType }>>(`todo-lists/${todolistId}/tasks`, {title})
-            .then(res => res.data)
+    async createTask(todolistId: string, title: string) {
+        let res = await instance.post<ResponseType<{
+            item: ResponseTaskType
+        }>>(`todo-lists/${todolistId}/tasks`, {title});
+        return res.data;
     },
-    deleteTask(todolistId: string, taskId: string) {
-        return instance.delete<ResponseType>(`todo-lists/${todolistId}/tasks/${taskId}`)
-            .then(res => res.data)
+    async deleteTask(todolistId: string, taskId: string) {
+        let res = await instance.delete<ResponseType>(`todo-lists/${todolistId}/tasks/${taskId}`);
+        return res.data;
     },
-    updateTask(todolistId: string, taskId: string, task: UpdateTaskModelType) {
-        return instance.put<ResponseType<{ item: ResponseTaskType }>>(`todo-lists/${todolistId}/tasks/${taskId}`, {...task})
-            .then(res => res.data)
+    async updateTask(todolistId: string, taskId: string, task: UpdateTaskModelType) {
+        let res = await instance.put<ResponseType<{
+            item: ResponseTaskType
+        }>>(`todo-lists/${todolistId}/tasks/${taskId}`, {...task});
+        return res.data;
     }
 }
 export const authAPI = {
-    me() {
-        return instance.get<ResponseType<SessionUserInfoType>>("auth/me")
-            .then(res => res.data)
+    async me() {
+        let res = await instance.get<ResponseType<SessionUserInfoType>>("auth/me");
+        return res.data;
     },
-    login(userData: FormikValues) {
-        return instance.post<ResponseType<{ userId: number }>>("auth/login", {...userData})
-            .then(res => res.data)
+    async login(userData: FormikValues) {
+        let res = await instance.post<ResponseType<{ userId: number }>>("auth/login", {...userData});
+        return res.data;
     },
-    logout() {
-        return instance.delete<ResponseType>("auth/login")
-            .then(res => res.data)
+    async logout() {
+        let res = await instance.delete<ResponseType>("auth/login");
+        return res.data;
     },
 
 }

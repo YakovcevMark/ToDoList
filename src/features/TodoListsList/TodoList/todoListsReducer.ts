@@ -1,7 +1,7 @@
 import {RequestStatusType} from "app/appSlice/appSlice";
 import {ResponseTodoListType, todoListsApi} from "api/todolistApi";
-import {createAction} from "@reduxjs/toolkit";
 import {createAsyncSlice} from "middleware/createAsyncSlice";
+import {logout} from "features/Login/authReducer";
 
 
 export type FilterValuesType = "all" | "active" | "completed"
@@ -21,13 +21,6 @@ const todoListsSlice = createAsyncSlice({
     name: "TodoListsStateT",
     initialState,
     reducers: (create) => ({
-        changeTodoListEntityStatus: create.reducer<{ id: string, entityStatus: RequestStatusType }>(
-            (state, action) => {
-                state[action.payload.id] = {
-                    ...state[action.payload.id],
-                    entityStatus: action.payload.entityStatus
-                }
-            }),
         changeTodoListFilter: create.reducer<{ id: string, filter: FilterValuesType }>(
             (state, action) => {
                 state[action.payload.id] = {
@@ -36,9 +29,8 @@ const todoListsSlice = createAsyncSlice({
                 }
             }),
         fetchTodoLists: create.asyncThunk(
-            async (_: void, {dispatch}) => {
+            async (_: void) => {
                 const res = await todoListsApi.getLists()
-                dispatch(setTodoListsAC(res.data))
                 return res.data
             },
             {
@@ -53,15 +45,23 @@ const todoListsSlice = createAsyncSlice({
             }
         ),
         deleteTodoList: create.asyncThunk(
-            async (id: string, {dispatch}) => {
-                dispatch(changeTodoListEntityStatus({id, entityStatus: "loading"}))
+            async (id: string) => {
                 const res = await todoListsApi.deleteList(id)
                 if (res.resultCode === 0) {
-                    dispatch(deleteTodoListAC(id))
-                    return id
+                    return
                 } else {
-                    dispatch(changeTodoListEntityStatus({id, entityStatus: "succeeded"}))
                     throw new Error(res.messages[0])
+                }
+
+            }, {
+                fulfilled: (s, a) => {
+                    delete s[a.meta.arg]
+                },
+                pending: (s, a) => {
+                    s[a.meta.arg].entityStatus = "loading"
+                },
+                rejected: (s, a) => {
+                    s[a.meta.arg].entityStatus = "failed"
                 }
             }),
         updateTodoListTitle: create.asyncThunk(
@@ -78,11 +78,10 @@ const todoListsSlice = createAsyncSlice({
                 }
             }),
         createTodoList: create.asyncThunk(
-            async (title: string, {dispatch}) => {
+            async (title: string) => {
                 const res = await todoListsApi.createList(title)
                 const neededDate = res.data.item
                 if (res.resultCode === 0) {
-                    dispatch(createTodoListAC(neededDate))
                     return neededDate
                 } else {
                     throw new Error(res.messages[0])
@@ -99,23 +98,16 @@ const todoListsSlice = createAsyncSlice({
     }),
     extraReducers: (builder) =>
         builder
-            .addCase(deleteTodoListAC, (state, action) => {
-                delete state[action.payload]
-            })
-            .addCase(clearTodoListsDataAC, (state) => {
-                for (let key in state) {
-                    delete state[key]
+            .addCase(logout.fulfilled, s => {
+                for (let k in s) {
+                    delete s[k]
                 }
             })
-})
 
-export const deleteTodoListAC = createAction<string, 'REMOVE_TODOLIST'>('REMOVE_TODOLIST')
-export const createTodoListAC = createAction<ResponseTodoListType, 'ADD_TODOLIST'>('ADD_TODOLIST')
-export const setTodoListsAC = createAction<ResponseTodoListType[], 'SET_TODOS'>('SET_TODOS')
-export const clearTodoListsDataAC = createAction<void, 'CLEAR_DATA'>('CLEAR_DATA')
+})
 export const todoListsReducer = todoListsSlice.reducer
 export const {
-    changeTodoListEntityStatus, changeTodoListFilter,
+    changeTodoListFilter,
     fetchTodoLists, updateTodoListTitle, createTodoList, deleteTodoList,
 } = todoListsSlice.actions
 
